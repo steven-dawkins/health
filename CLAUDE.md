@@ -1,6 +1,13 @@
 # Marathon plan
 
-Goal: build a personalised marathon training plan from the owner's Apple Health history. This repo holds the data pipeline (raw exports -> clean CSVs -> summary) that the plan is based on. Race date and goal time are **not yet decided/recorded here**; ask before writing a plan and record them in this file once known.
+Goal: build a personalised marathon training plan from the owner's Apple Health history. This repo holds the data pipeline (raw exports -> clean CSVs -> summary) that the plan is based on. See "Target race" below for the race and plan.
+
+## Target race
+
+- **MK Marathon, Monday 3 May 2027** (bank holiday; stadium finish at StadiumMK). Chosen by the owner. Start time not confirmed on the site.
+- The MK Half is on the **same day**, so it cannot be a tune-up. Tune-up race (confirmed by the owner): **Milton Keynes Festival of Running, Sunday 28 Mar 2027** (Easter Sunday; half 10:45, 20 Mile 09:50; road, mostly flat, ~165 m climbing). The owner has **chosen the half** (not yet confirmed as entered).
+- Goal time deliberately **not fixed**: the owner wants to build speed first. Decision gates are an all-out 5k parkrun on Sat 30 Jan 2027 (owner confirmed available) and the tune-up half on 28 Mar 2027. Plan: `plan/marathon_plan.md` (25 weeks from 9 Nov 2026).
+- No injuries after the 18 Oct 2026 marathon. Owner is free to exercise every day and can train as normal over Christmas; the plan uses 6 runs/week plus one rest day.
 
 ## Layout
 

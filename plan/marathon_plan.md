@@ -1,0 +1,83 @@
+# MK Marathon plan: Monday 3 May 2027
+
+25 training weeks, Mon 9 Nov 2026 to Sun 2 May 2027. Built from Apple Health + parkrun data through 31 Oct 2026 (see `CLAUDE.md`).
+
+**Strategy: build speed first, commit to a time later.** No goal pace is fixed until two test gates. Until then, "MP" below is a provisional 5:00/km (3:30) and only used from week 15.
+
+## Where you start
+
+- Marathon 18 Oct 2026: 3:35:36. Held ~5:00/km to km 30, faded to 5:52 by km 42. Leg durability failed (power -12%, stride -15%), not heart rate.
+- 5k fitness ~21:15 (parkrun, Mar 2026), which projects to ~3:20-3:25 on paper. The gap between that and 3:35 is durability, so the plan builds speed *and* fatigue resistance.
+- Recent peak 95 km/week. Last data week was 25 km (post-race), so weeks 1-4 rebuild.
+- Baselines for the recovery rule: resting HR ~47 bpm, HRV ~55-58 ms.
+
+## Decision gates (this is how the goal time gets chosen)
+
+| Gate | When | Test | Decision |
+|---|---|---|---|
+| 1 | Sat 30 Jan 2027 (wk 12) | Rested all-out 5k (parkrun) | Marathon estimate ~ 5k time x 9.9. 20:45 -> 3:25; 21:15 -> 3:30; 21:45 -> 3:35. Sets *provisional* MP. |
+| 2 | Sun 28 Mar 2027 (wk 20), 5 weeks out | Half marathon race at the Milton Keynes Festival of Running | Marathon goal ~ half time x 2.1-2.15 (1:40 -> 3:30; 1:37 -> 3:24). **Sets final goal and MP for weeks 21-25.** |
+
+**Tune-up race:** Milton Keynes Festival of Running, Sunday 28 March 2027 (Easter Sunday), start XScape, MK9 3XA. Half starts 10:45 (3.5 h limit); 20 Mile starts 09:50 (4:25 limit). Road, mostly flat, ~165 m climbing. Standard entry: half £38, 20 Mile £42 until 28 Feb, then £42 / £47. The MK Marathon's own half is on race day, so it cannot be used.
+**Decision: the half** (confirmed). Why: race the **half**: it is a cleaner predictor of marathon pace and you recover in about a week. The 20 Mile at race effort would cost ~10 days of recovery, only 5 weeks out. If you prefer the 20 Mile, run it as a controlled long run at 5:00-5:05/km (not a race) and judge the goal by how heart rate drifts after mile 14, since that gives a weaker time prediction.
+**If a gate disappoints:** don't chase the number. Drop the goal one step (about 5 min) and keep the structure.
+
+## Paces (provisional, recompute at each gate)
+
+| Effort | Pace/km | Note |
+|---|---|---|
+| Easy / long | 5:30-6:00 | HR under ~140 |
+| Steady | 5:10-5:20 | |
+| Marathon (provisional) | 5:00 | 3:30; final MP set at Gate 2 |
+| Threshold | 4:30-4:35 | |
+| 10k | ~4:25 | |
+| 5k / intervals | 4:10-4:15 | |
+| Reps 200-400 m | 3:55-4:05 | |
+
+## Weekly template
+
+You are free every day, but keep one full rest day (Mon) so the legs absorb the work; swap it for 30 min easy cycling or walking if you want to move. Mon rest | Tue session A (speed) | Wed easy-medium 10-14 km | Thu session B (threshold/MP) | Fri rest or short easy 6-8 km | Sat parkrun (controlled, or all-out on test days) or easy | Sun long run. Add 2 strength sessions per week (single-leg squats/step-ups, calf raises, hip stability, 30 min).
+
+## The 25 weeks
+
+| Wk | w/c | Phase | km | Long (km) | Key sessions |
+|---|---|---|---|---|---|
+| 1 | 9 Nov | Rebuild | 40 | 14 | Easy + 6x20 s strides twice |
+| 2 | 16 Nov | Rebuild | 45 | 16 | Add 6x10 s hill sprints |
+| 3 | 23 Nov | Rebuild | 50 | 18 | 8x1 min fartlek |
+| 4 | 30 Nov | Rebuild (down) | 42 | 14 | Easy + strides |
+| 5 | 7 Dec | Speed | 52 | 18 | A: 10x400 @5k, 60 s jog. B: 3x8 min threshold |
+| 6 | 14 Dec | Speed | 58 | 20 | A: 6x800 @5k. B: 4x8 min threshold |
+| 7 | 21 Dec | Speed | 62 | 22 | A: 5x1000 @5k. B: 3x10 min threshold |
+| 8 | 28 Dec | Speed (down) | 50 | 16 | A: 8x400 @3:55-4:05. B: easy + strides |
+| 9 | 4 Jan | Speed | 62 | 22 | A: 6x1000 @5k. B: 2x15 min threshold |
+| 10 | 11 Jan | Speed | 66 | 24 | A: 5x1200 @5k. B: 25 min tempo |
+| 11 | 18 Jan | Speed | 70 | 26 | A: 4x1600 @5k. B: 3x12 min threshold |
+| 12 | 25 Jan | Speed (down/test) | 55 | 16 | A: 5x400 sharp. **Sat 30 Jan: all-out 5k = Gate 1** |
+| 13 | 1 Feb | Speed-strength | 68 | 24 | A: 6x3 min @10k. B: 5 km tempo |
+| 14 | 8 Feb | Speed-strength | 74 | 26 | A: 5x1200 @10k-5k. B: 2x20 min threshold |
+| 15 | 15 Feb | Speed-strength | 78 | 28 (last 6 km @MP) | A: 6x1000 @5k. B: 10 km @MP inside 14 km |
+| 16 | 22 Feb | Strength (down) | 62 | 20 | A: 8x400. B: easy. Sat: controlled parkrun |
+| 17 | 1 Mar | Marathon-specific | 80 | 28 (10 km @MP) | A: 4x2 km threshold. B: 12 km @MP |
+| 18 | 8 Mar | Marathon-specific | 86 | 30 (12 km @MP) | A: 5x1.6 km threshold. B: 3x5 km @MP, 1 km float |
+| 19 | 15 Mar | Marathon-specific | 90 | 32 (16 km @ provisional MP) | A: 6x1 km @10k. B: 16 km with 10 @MP |
+| 20 | 22 Mar | Marathon-specific (race) | 68 | Half race Sun 28 Mar | **Gate 2.** Tue: 6x400 sharpener. Fri rest. Sat: 20 min + strides. Race fuel and shoes as for the marathon |
+| 21 | 29 Mar | Marathon-specific | 82 | 30 (14 km @ final MP) | Mon rest (Easter Monday), Tue easy. A (Wed): 4x1 km @10k. B (Fri): 10 km @ final MP |
+| 22 | 5 Apr | Peak | 92 | 32 (last 10 km @MP) | A: 5x1 km @10k. B: 18 km with 12 @MP in race shoes/fuel |
+| 23 | 12 Apr | Taper | 75 | 22 (6 km @MP) | A: 5x1 km @10k. B: 8 km @MP |
+| 24 | 19 Apr | Taper | 58 | 16 (4 km @MP) | A: 4x1 km @10k. B: 5 km @MP |
+| 25 | 26 Apr | Taper / race week | 40 | n/a | Tue: 4x800 @5k. Thu: 4 km @MP. Sat: 20 min + strides. Sun 2 May: 15 min shakeout |
+| - | **Mon 3 May** | **MK Marathon** | | | Start time per organisers (check the marathon page) |
+
+## Durability and fuelling (what failed last time)
+
+- Aim for the same speed to km 42 that you held to km 30. Last time pace was fine; the legs failed after km 34.
+- Fuelling: practise 60 g carbohydrate per hour from week 13, building towards 75-90 g/h by week 21, on every run of 24 km or more. The data cannot show whether fuelling contributed to the fade, so test it; don't assume.
+- The long runs finishing at MP (weeks 15-22) and the two strength sessions per week are the durability work.
+
+## Safeguards
+
+- If resting HR is 4+ bpm above ~47 for 3 days, or 7-day HRV is below ~50 ms, replace that week's Tuesday or Thursday session with easy running.
+- Never add more than ~10% to the previous full week, except rebounding after a down week.
+- Down weeks (4, 8, 12, 16) are not optional. Skip a hard session before skipping a down week.
+- Any niggle lasting more than 3 days: cut quality first, then the long run.
