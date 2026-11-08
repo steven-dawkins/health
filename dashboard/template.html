@@ -78,6 +78,12 @@ button:focus-visible, svg:focus-visible { outline: 2px solid var(--s1); outline-
 .tip .row span { color: var(--ink-2); }
 .tip .x { color: var(--ink-2); margin-top: 4px; line-height: 1.35; }
 .tablewrap { max-height: 340px; overflow: auto; }
+.tablewrap.free { max-height: none; }
+.prose h2 { margin-bottom: 6px; }
+.prose p { margin: 8px 0; }
+.prose ul { margin: 8px 0; padding-left: 20px; }
+.prose li { margin: 4px 0; }
+.prose code { font-size: 13px; background: var(--wash); padding: 1px 4px; border-radius: 4px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
 th { color: var(--ink-2); font-weight: 600; position: sticky; top: 0; background: var(--surface); }
@@ -147,7 +153,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 24px; line-height: 1.
     </div>
   </section>
   <section id="p-plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
-    <div class="grid"><div class="card wide" id="c-plan"></div></div>
+    <div class="grid" id="plan-grid"></div>
   </section>
   <section id="p-runs" role="tabpanel" aria-labelledby="tab-runs" hidden>
     <div class="grid"><div class="card wide" id="c-runs"></div></div>
@@ -380,9 +386,22 @@ function renderAll() {
 }
 
 /* ---------- static sections ---------- */
-function renderPlan() {
-  const card = document.getElementById("c-plan"); card.replaceChildren();
-  const head = el("header"); const tt = el("div"); tt.append(el("h2", {}, "Training plan")); tt.append(el("p", {}, "25 weeks, speed first. The goal time is decided at two test points, not up front.")); head.append(tt); card.append(head);
+function rich(parent, text) {
+  text.split(/(\*\*[^*]+\*\*|\*[^*\s][^*]*\*|`[^`]+`)/).forEach(seg => { if (!seg) return;
+    if (seg.startsWith("**")) parent.append(el("strong", {}, seg.slice(2, -2)));
+    else if (seg.startsWith("*")) parent.append(el("em", {}, seg.slice(1, -1)));
+    else if (seg.startsWith("`")) parent.append(el("code", {}, seg.slice(1, -1)));
+    else parent.append(document.createTextNode(seg)); });
+}
+function planTable(head, rows) {
+  const wrap = el("div", { class: "tablewrap free" }), tbl = el("table"), h = el("tr");
+  head.forEach(c => h.append(el("th", {}, c))); { const th = el("thead"); th.append(h); tbl.append(th); }
+  const tb = el("tbody"); rows.forEach(r => { const tr = el("tr"); r.forEach(c => { const td = el("td"); rich(td, c); tr.append(td); }); tb.append(tr); });
+  tbl.append(tb); wrap.append(tbl); return wrap;
+}
+function weeksCard() {
+  const card = el("div", { class: "card wide", id: "c-plan" });
+  const head = el("header"); const tt = el("div"); tt.append(el("h2", {}, "Week by week")); tt.append(el("p", {}, "25 weeks, speed first. The goal time is decided at two test points, not up front.")); head.append(tt); card.append(head);
   const rc = el("div", { class: "races" });
   DATA.races.forEach(r => { const d = el("div", { class: "race" }); d.append(el("div", { class: "d" }, dfmt(T(r.date))), el("div", { class: "n" }, r.name)); if (r.result) d.append(el("div", { class: "r" }, r.result)); rc.append(d); });
   card.append(rc);
@@ -393,6 +412,20 @@ function renderPlan() {
     [p.week, dshort(T(p.start)), p.phase, p.km, p.long, p.key].forEach((v, i) => tr.append(el("td", i === 0 || i === 3 ? { class: "n" } : {}, String(v)))); tb.append(tr); });
   tbl.append(tb); wrap.append(tbl); card.append(wrap);
   card._scroll = () => { const cur = tb.querySelector("tr.now"); if (cur) wrap.scrollTop = Math.max(0, cur.offsetTop - 60); };
+  return card;
+}
+function renderPlan() {
+  const grid = document.getElementById("plan-grid"); grid.replaceChildren();
+  DATA.plan_doc.forEach(sec => {
+    if (/^The 25 weeks/.test(sec.title)) { grid.append(weeksCard()); return; }
+    const card = el("div", { class: "card wide prose" }); card.append(el("h2", {}, sec.title));
+    sec.blocks.forEach(b => {
+      if (b.t === "p") { const p = el("p"); rich(p, b.text); card.append(p); }
+      else if (b.t === "ul") { const ul = el("ul"); b.items.forEach(i => { const li = el("li"); rich(li, i); ul.append(li); }); card.append(ul); }
+      else if (b.t === "table") card.append(planTable(b.head, b.rows));
+    });
+    grid.append(card);
+  });
 }
 function renderRuns() {
   const card = document.getElementById("c-runs"); card.replaceChildren();

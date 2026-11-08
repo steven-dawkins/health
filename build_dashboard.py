@@ -12,7 +12,7 @@ PRIVACY - what is deliberately NOT published:
   * GPS routes, heart-rate samples, workout start times (dates only)
   * Workout source / device names, parkrun venue names and URLs
   * Body weight, steps, energy, sleep stages, any raw Apple Health records
-Published: weekly run totals, daily 7/28-day averages of resting HR, HRV and sleep,
+Published: the full training plan document, weekly run totals, daily 7/28-day averages of resting HR, HRV and sleep,
 monthly VO2 max, per-run date/distance/pace/avg HR (last 12 months), parkrun
 date/time/position, race results, and the training plan.
 """
@@ -59,6 +59,44 @@ def parse_plan():
     return rows
 
 
+def parse_plan_doc():
+    """Whole plan document as sections of paragraph / bullet / table blocks (rendered with textContent)."""
+    text = (ROOT / "plan" / "marathon_plan.md").read_text().replace(" (see `CLAUDE.md`)", "")
+    sections, cur, lines = [], {"title": "Overview", "blocks": []}, text.splitlines()
+    i = 0
+    while i < len(lines):
+        ln = lines[i].rstrip()
+        if ln.startswith("# "):
+            pass
+        elif ln.startswith("## "):
+            if cur["blocks"] or cur["title"] != "Overview":
+                sections.append(cur)
+            cur = {"title": ln[3:].strip(), "blocks": []}
+        elif ln.startswith("|"):
+            rows = []
+            while i < len(lines) and lines[i].startswith("|"):
+                cells = [c.strip() for c in lines[i].strip().strip("|").split("|")]
+                if not all(re.fullmatch(r"-+", c) for c in cells):
+                    rows.append(cells)
+                i += 1
+            i -= 1
+            cur["blocks"].append({"t": "table", "head": rows[0], "rows": rows[1:]})
+        elif ln.startswith("- "):
+            items = []
+            while i < len(lines) and lines[i].startswith("- "):
+                items.append(lines[i][2:].strip())
+                i += 1
+            i -= 1
+            cur["blocks"].append({"t": "ul", "items": items})
+        elif ln.strip():
+            cur["blocks"].append({"t": "p", "text": ln.strip()})
+        i += 1
+    sections.append(cur)
+    if not any(x["title"].startswith("The 25 weeks") for x in sections):
+        raise SystemExit("plan/marathon_plan.md: missing the 'The 25 weeks' section")
+    return sections
+
+
 def main():
     s = ROOT / "summary"
     weekly = pd.read_csv(s / "weekly_running.csv", parse_dates=["week_start"])
@@ -87,6 +125,7 @@ def main():
         "runs": [{"d": x.date.date().isoformat(), "km": r(x.distance_km, 2), "pace": r(x.pace_min_km, 3),
                   "hr": r(x.avg_hr, 0)} for x in recent.itertuples()],
         "plan": parse_plan(),
+        "plan_doc": parse_plan_doc(),
         "races": RACES,
     }
     blob = json.dumps(data, separators=(",", ":"))
