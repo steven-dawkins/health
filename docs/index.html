@@ -59,7 +59,8 @@ button:focus-visible, svg:focus-visible { outline: 2px solid var(--s1); outline-
 .grid > *, .kpis > * { min-width: 0; }
 .card.wide { grid-column: 1 / -1; }
 .card header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
-.card header p { margin: 2px 0 0; color: var(--ink-2); font-size: 13px; }
+.card header p, #c-detail header p { margin: 2px 0 0; color: var(--ink-2); font-size: 13px; }
+#c-detail header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
 .tbl-btn { border: 1px solid var(--border); background: transparent; color: var(--ink-2); border-radius: 6px; padding: 4px 10px; font: inherit; font-size: 12px; cursor: pointer; white-space: nowrap; }
 .tbl-btn:hover { background: var(--wash); }
 .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); margin: 4px 0 2px; }
@@ -87,8 +88,25 @@ tr.now td { background: var(--wash); font-weight: 600; }
 .race .d { color: var(--ink-2); font-size: 12px; }
 .race .n { font-weight: 600; margin-top: 2px; }
 .race .r { font-size: 20px; font-weight: 650; margin-top: 2px; }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: 20px 0 0; overflow-x: auto; overflow-y: hidden; }
+.tabs button { border: 0; background: transparent; color: var(--ink-2); font: inherit; font-size: 14px; padding: 10px 14px; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs button:hover { color: var(--ink); background: var(--wash); }
+.tabs button[aria-selected="true"] { color: var(--ink); font-weight: 600; border-bottom-color: var(--s1); }
+[role="tabpanel"] { padding-top: 16px; }
+[hidden] { display: none !important; }
+.tile.click { display: block; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.tile.click:hover { border-color: var(--s1); }
+.tile .more { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
+.tile.click:hover .more { color: var(--s1); }
+dialog { width: min(980px, calc(100vw - 24px)); max-width: none; max-height: calc(100vh - 24px); overflow: auto; border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: var(--surface); color: var(--ink); }
+dialog::backdrop { background: rgba(0,0,0,.55); }
+.dlg-top { display: flex; justify-content: space-between; align-items: center; color: var(--ink-2); font-size: 13px; margin-bottom: 8px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 4px 0 14px; }
+.stat { border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; }
+.stat .l, .stat .s { font-size: 12px; color: var(--ink-2); }
+.stat .v { font-size: 20px; font-weight: 650; line-height: 1.3; }
 footer { color: var(--ink-3); font-size: 12px; margin-top: 24px; line-height: 1.5; }
-@media (max-width: 760px) { .grid { grid-template-columns: minmax(0, 1fr); } .hero b { font-size: 48px; } }
+@media (max-width: 760px) { .tabs button { padding: 10px 9px; } .grid { grid-template-columns: minmax(0, 1fr); } .hero b { font-size: 48px; } }
 </style>
 </head>
 <body>
@@ -98,23 +116,48 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 24px; line-height: 1.
   <div class="hero"><b id="days">-</b><span id="daysLbl">days to go</span></div>
   <p class="sub" id="asof"></p>
 
-  <div class="filters" role="group" aria-label="Time range">
+  <div class="tabs" id="tabs" role="tablist" aria-label="Dashboard sections">
+    <button role="tab" id="tab-overview" aria-controls="p-overview" aria-selected="true">Overview</button>
+    <button role="tab" id="tab-recovery" aria-controls="p-recovery" aria-selected="false" tabindex="-1">Recovery</button>
+    <button role="tab" id="tab-fitness" aria-controls="p-fitness" aria-selected="false" tabindex="-1">Fitness</button>
+    <button role="tab" id="tab-plan" aria-controls="p-plan" aria-selected="false" tabindex="-1">Plan</button>
+    <button role="tab" id="tab-runs" aria-controls="p-runs" aria-selected="false" tabindex="-1">Runs</button>
+  </div>
+
+  <div class="filters" id="filters" role="group" aria-label="Time range" style="margin-top:16px">
     <label>Time range</label>
     <div class="seg" id="range"></div>
   </div>
 
-  <section class="kpis" id="kpis" aria-label="Headline numbers"></section>
-
-  <section class="grid">
-    <div class="card wide" id="c-weekly"></div>
-    <div class="card" id="c-rhr"></div>
-    <div class="card" id="c-hrv"></div>
-    <div class="card" id="c-vo2"></div>
-    <div class="card" id="c-sleep"></div>
-    <div class="card wide" id="c-park"></div>
-    <div class="card wide" id="c-plan"></div>
-    <div class="card wide" id="c-runs"></div>
+  <section id="p-overview" role="tabpanel" aria-labelledby="tab-overview">
+    <div class="kpis" id="kpis" aria-label="Headline numbers"></div>
+    <div class="grid"><div class="card wide" id="c-weekly"></div></div>
   </section>
+  <section id="p-recovery" role="tabpanel" aria-labelledby="tab-recovery" hidden>
+    <div class="grid">
+      <div class="card" id="c-rhr"></div>
+      <div class="card" id="c-hrv"></div>
+      <div class="card wide" id="c-sleep"></div>
+    </div>
+  </section>
+  <section id="p-fitness" role="tabpanel" aria-labelledby="tab-fitness" hidden>
+    <div class="grid">
+      <div class="card wide" id="c-vo2"></div>
+      <div class="card wide" id="c-park"></div>
+    </div>
+  </section>
+  <section id="p-plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
+    <div class="grid"><div class="card wide" id="c-plan"></div></div>
+  </section>
+  <section id="p-runs" role="tabpanel" aria-labelledby="tab-runs" hidden>
+    <div class="grid"><div class="card wide" id="c-runs"></div></div>
+  </section>
+
+  <dialog id="detail" aria-label="Long-term view">
+    <div class="dlg-top"><span>Long-term view &middot; all available data</span><button class="tbl-btn" id="detailClose" type="button">Close</button></div>
+    <div class="stats" id="detailStats"></div>
+    <div id="c-detail"></div>
+  </dialog>
 
   <footer>
     Personal training data from Apple Health, parkrun and the training plan, shown as weekly/monthly aggregates and per-run
@@ -252,7 +295,7 @@ function chart(card, spec) {
     svg.addEventListener("blur", () => { cross.setAttribute("visibility", "hidden"); hl.replaceChildren(); tip.style.display = "none"; });
     plot.append(svg, tip);
   }
-  draw(); new ResizeObserver(() => draw()).observe(plot);
+  draw(); if (card._ro) card._ro.disconnect(); card._ro = new ResizeObserver(() => draw()); card._ro.observe(plot);
 }
 
 /* ---------- data helpers ---------- */
@@ -268,25 +311,28 @@ const sparkline = (vals) => {
 function renderKpis() {
   const box = document.getElementById("kpis"); box.replaceChildren();
   const D = DATA.daily;
-  const tile = (label, val, unit, delta, good, spark) => {
-    const t = el("div", { class: "tile" }); t.append(el("div", { class: "lbl" }, label));
+  const tile = (label, val, unit, delta, good, spark, longKey) => {
+    const t = longKey ? el("button", { class: "tile click", type: "button", "aria-haspopup": "dialog", "aria-label": label + " " + val + (unit ? " " + unit : "") + ". Open long-term view." }) : el("div", { class: "tile" });
+    t.append(el("div", { class: "lbl" }, label));
     const v = el("div", { class: "val" }, val); if (unit) v.append(el("small", {}, unit)); t.append(v);
-    t.append(el("div", { class: "dl" + (good ? " good" : "") }, delta || "")); if (spark) t.append(spark); box.append(t);
+    t.append(el("div", { class: "dl" + (good ? " good" : "") }, delta || "")); if (spark) t.append(spark);
+    if (longKey) { t.append(el("div", { class: "more" }, "Long-term view \u203A")); t.onclick = () => openDetail(longKey); }
+    box.append(t);
   };
   const trend = (key, now, ago, dec, upGood, unit) => { if (now == null || ago == null) return ["", false]; const d = now - ago; if (Math.abs(d) < 0.05) return ["no change vs 90 days ago", false];
     return [(d > 0 ? "▲ +" : "▼ ") + Math.abs(d).toFixed(dec) + " " + unit + " vs 90 days ago", upGood ? d > 0 : d < 0]; };
   const sample = (key, n) => { const out = []; for (let i = n; i >= 0; i--) { const r = lastNonNull(D, key, asOf - i * 7 * DAY); out.push(r ? r[key] : null); } return out; };
   const rh = lastNonNull(D, "rhr28"), rh0 = lastNonNull(D, "rhr28", asOf - 90 * DAY);
-  if (rh) { const [d, g] = trend("rhr28", rh.rhr28, rh0 && rh0.rhr28, 1, false, "bpm"); tile("Resting heart rate (28-day)", rh.rhr28.toFixed(1), "bpm", d, g, sparkline(sample("rhr7", 12))); }
+  if (rh) { const [d, g] = trend("rhr28", rh.rhr28, rh0 && rh0.rhr28, 1, false, "bpm"); tile("Resting heart rate (28-day)", rh.rhr28.toFixed(1), "bpm", d, g, sparkline(sample("rhr7", 12)), "rhr"); }
   const hv = lastNonNull(D, "hrv28"), hv0 = lastNonNull(D, "hrv28", asOf - 90 * DAY);
-  if (hv) { const [d, g] = trend("hrv28", hv.hrv28, hv0 && hv0.hrv28, 1, true, "ms"); tile("HRV (28-day)", hv.hrv28.toFixed(1), "ms", d, g, sparkline(sample("hrv7", 12))); }
+  if (hv) { const [d, g] = trend("hrv28", hv.hrv28, hv0 && hv0.hrv28, 1, true, "ms"); tile("HRV (28-day)", hv.hrv28.toFixed(1), "ms", d, g, sparkline(sample("hrv7", 12)), "hrv"); }
   const V = DATA.vo2; if (V.length) { const v = V[V.length - 1], p = V.filter(x => T(x.d) <= T(v.d) - 85 * DAY).pop(); const dd = p ? v.v - p.v : null;
-    tile("VO2 max (Apple estimate)", v.v.toFixed(1), "", dd == null ? "" : (dd >= 0 ? "▲ +" : "▼ ") + Math.abs(dd).toFixed(1) + " vs 3 months ago", dd != null && dd > 0.05, sparkline(V.slice(-12).map(x => x.v))); }
+    tile("VO2 max (Apple estimate)", v.v.toFixed(1), "", dd == null ? "" : (dd >= 0 ? "▲ +" : "▼ ") + Math.abs(dd).toFixed(1) + " vs 3 months ago", dd != null && dd > 0.05, sparkline(V.slice(-12).map(x => x.v)), "vo2"); }
   const W = DATA.weekly.filter(w => T(w.d) <= asOf), l8 = W.slice(-8), p8 = W.slice(-16, -8), avg = a => a.reduce((s, w) => s + (w.km || 0), 0) / (a.length || 1);
-  if (l8.length) tile("Weekly distance (8-week avg)", avg(l8).toFixed(1), "km", p8.length ? "prior 8 weeks: " + avg(p8).toFixed(1) + " km" : "", false, sparkline(W.slice(-12).map(w => w.km)));
+  if (l8.length) tile("Weekly distance (8-week avg)", avg(l8).toFixed(1), "km", p8.length ? "prior 8 weeks: " + avg(p8).toFixed(1) + " km" : "", false, sparkline(W.slice(-12).map(w => w.km)), "dist");
   const mar = DATA.races[0]; tile("Last marathon", mar.result, "", dfmt(T(mar.date)), false, null);
   const P = DATA.parkruns, lp = P[P.length - 1], pb = P.reduce((a, b) => b.sec < a.sec ? b : a);
-  tile("Latest parkrun 5k", lp.t, "", dfmt(T(lp.d)) + " · PB " + pb.t, false, null);
+  tile("Latest parkrun 5k", lp.t, "", dfmt(T(lp.d)) + " · PB " + pb.t, false, null, "park");
 }
 
 function renderAll() {
@@ -346,7 +392,7 @@ function renderPlan() {
   DATA.plan.forEach(p => { const tr = el("tr", T(p.start) <= now && now < T(p.start) + 7 * DAY ? { class: "now", "aria-current": "date" } : {});
     [p.week, dshort(T(p.start)), p.phase, p.km, p.long, p.key].forEach((v, i) => tr.append(el("td", i === 0 || i === 3 ? { class: "n" } : {}, String(v)))); tb.append(tr); });
   tbl.append(tb); wrap.append(tbl); card.append(wrap);
-  const cur = tb.querySelector("tr.now"); if (cur) wrap.scrollTop = cur.offsetTop - 60;
+  card._scroll = () => { const cur = tb.querySelector("tr.now"); if (cur) wrap.scrollTop = Math.max(0, cur.offsetTop - 60); };
 }
 function renderRuns() {
   const card = document.getElementById("c-runs"); card.replaceChildren();
@@ -356,6 +402,75 @@ function renderRuns() {
   const tb = el("tbody"); DATA.runs.forEach(r => { const tr = el("tr");
     [dfmt(T(r.d)), r.km.toFixed(1), r.pace ? mmss(r.pace * 60) : "-", r.hr == null ? "-" : r.hr].forEach((v, i) => tr.append(el("td", i ? { class: "n" } : {}, String(v)))); tb.append(tr); });
   tbl.append(tb); wrap.append(tbl); card.append(wrap);
+}
+
+/* ---------- long-term detail view ---------- */
+const monthName = t => { const d = new Date(t); return MON[d.getUTCMonth()] + " " + d.getUTCFullYear(); };
+function monthlyMean(rows, key) {
+  const m = new Map();
+  rows.forEach(r => { if (r[key] == null) return; const k = r.d.slice(0, 7), a = m.get(k) || [0, 0]; a[0] += r[key]; a[1]++; m.set(k, a); });
+  return [...m].sort().map(([k, [sum, n]]) => ({ t: T(k + "-01"), y: sum / n }));
+}
+function extremes(pts) {
+  let lo = pts[0], hi = pts[0], sum = 0; pts.forEach(p => { if (p.y < lo.y) lo = p; if (p.y > hi.y) hi = p; sum += p.y; });
+  return { lo, hi, avg: sum / pts.length, last: pts[pts.length - 1] };
+}
+function monthlySpec(title, subtitle, pts, fmt, labels, colName, seriesName) {
+  const e = extremes(pts);
+  return { spec: { title, subtitle, height: 300, xDomain: [pts[0].t - 12 * DAY, pts[pts.length - 1].t + 12 * DAY], maxGap: 70 * DAY, yFmt: v => v, valFmt: fmt, tipDate: monthName,
+      series: [{ name: seriesName, color: "--s1", type: "line", pts }], tableCols: ["Month", colName], tableRows: [...pts].reverse().map(p => [monthName(p.t), fmt(p.y)]) },
+    stats: [["Latest", fmt(e.last.y), monthName(e.last.t)], [labels[0], fmt(e.lo.y), monthName(e.lo.t)], [labels[1], fmt(e.hi.y), monthName(e.hi.t)], ["Average", fmt(e.avg), "all months shown"]] };
+}
+function longSpec(key) {
+  if (key === "rhr") return monthlySpec("Resting heart rate: long-term", "Monthly average of the 7-day average. Lower is better.", monthlyMean(DATA.daily, "rhr7"), v => v.toFixed(1) + " bpm", ["Lowest month", "Highest month"], "Resting HR (bpm)", "Monthly average");
+  if (key === "hrv") return monthlySpec("Heart rate variability: long-term", "Monthly average of the 7-day average (SDNN). Higher usually means better recovered.", monthlyMean(DATA.daily, "hrv7"), v => v.toFixed(1) + " ms", ["Lowest month", "Highest month"], "HRV (ms)", "Monthly average");
+  if (key === "vo2") return monthlySpec("VO2 max: long-term", "Monthly average of Apple Watch estimates (mL/min/kg). Read the direction, not the exact value.", DATA.vo2.map(v => ({ t: T(v.d), y: v.v })), v => v.toFixed(1), ["Lowest month", "Highest month"], "VO2 max", "Monthly average");
+  if (key === "dist") {
+    const first = DATA.weekly.findIndex(w => w.km > 0), W = DATA.weekly.slice(Math.max(0, first)).filter(w => w.km != null), pts = W.map(w => ({ t: T(w.d), y: w.km, x: w.runs + " runs \u00B7 long run " + (w.long != null ? w.long + " km" : "-") }));
+    const avg8 = pts.map((p, i) => { const a = pts.slice(Math.max(0, i - 7), i + 1); return { t: p.t, y: a.reduce((s, q) => s + q.y, 0) / a.length }; });
+    const peak = pts.reduce((a, b) => b.y > a.y ? b : a), peak8 = avg8.reduce((a, b) => b.y > a.y ? b : a), mean = pts.reduce((s, q) => s + q.y, 0) / pts.length, f = v => v.toFixed(1) + " km";
+    return { spec: { title: "Weekly distance: long-term", subtitle: "Kilometres per week (Mon-Sun) with the 8-week rolling average.", height: 300, zero: true, xDomain: [pts[0].t, pts[pts.length - 1].t + 7 * DAY], yFmt: v => v, valFmt: v => v.toFixed(0) + " km",
+        series: [{ name: "Weekly distance", color: "--s1", type: "bar", pts }, { name: "8-week average", color: "--s2", type: "line", pts: avg8 }],
+        tableCols: ["Week starting", "Distance (km)", "8-week avg (km)"], tableRows: pts.map((p, i) => [dfmt(p.t), p.y.toFixed(1), avg8[i].y.toFixed(1)]).reverse() },
+      stats: [["Latest 8-week average", f(avg8[avg8.length - 1].y), "to " + dfmt(avg8[avg8.length - 1].t)], ["Peak week", f(peak.y), dfmt(peak.t)], ["Peak 8-week average", f(peak8.y), "to " + dfmt(peak8.t)], ["Average week", f(mean), "all weeks shown"]] };
+  }
+  if (key === "park") {
+    const P = DATA.parkruns, pts = P.map(p => ({ t: T(p.d), y: p.sec / 60, x: "Position " + p.pos })), e = extremes(pts), f = v => mmss(v * 60);
+    return { spec: { title: "parkrun 5k times: long-term", subtitle: "Every parkrun on record. Each dot is one run.", height: 300, xDomain: [pts[0].t - 30 * DAY, pts[pts.length - 1].t + 30 * DAY], yFmt: f, valFmt: f,
+        series: [{ name: "5k time", color: "--s1", type: "dot", pts }], tableCols: ["Date", "Time", "Position"], tableRows: [...P].reverse().map(p => [dfmt(T(p.d)), p.t, p.pos]) },
+      stats: [["Fastest (PB)", f(e.lo.y), dfmt(e.lo.t)], ["Latest", f(e.last.y), dfmt(e.last.t)], ["Slowest", f(e.hi.y), dfmt(e.hi.t)], ["parkruns", String(pts.length), dfmt(pts[0].t) + " onward"]] };
+  }
+}
+const dlg = document.getElementById("detail");
+function openDetail(key) {
+  const { spec, stats } = longSpec(key), box = document.getElementById("detailStats"); box.replaceChildren();
+  stats.forEach(([l, v, s]) => { const d = el("div", { class: "stat" }); d.append(el("div", { class: "l" }, l), el("div", { class: "v" }, v), el("div", { class: "s" }, s)); box.append(d); });
+  dlg.showModal();
+  chart(document.getElementById("c-detail"), spec);
+}
+document.getElementById("detailClose").onclick = () => dlg.close();
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+dlg.addEventListener("close", () => { if (dlg.open) return; const c = document.getElementById("c-detail"); if (c._ro) c._ro.disconnect(); c.replaceChildren(); });
+
+/* ---------- tabs ---------- */
+const TABS = ["overview", "recovery", "fitness", "plan", "runs"];
+function showTab(id, focus) {
+  if (!TABS.includes(id)) id = "overview";
+  TABS.forEach(t => { const on = t === id, b = document.getElementById("tab-" + t); b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; document.getElementById("p-" + t).hidden = !on; });
+  document.getElementById("filters").hidden = id === "plan" || id === "runs";
+  if (focus) document.getElementById("tab-" + id).focus();
+  try { history.replaceState(null, "", "#" + id); } catch (e) {}
+  if (id === "plan") { const c = document.getElementById("c-plan"); if (c._scroll) c._scroll(); }
+}
+function initTabs() {
+  TABS.forEach(t => { document.getElementById("tab-" + t).onclick = () => showTab(t); });
+  document.getElementById("tabs").addEventListener("keydown", e => {
+    const i = TABS.findIndex(t => document.getElementById("tab-" + t).getAttribute("aria-selected") === "true"); let n = null;
+    if (e.key === "ArrowRight") n = (i + 1) % TABS.length; else if (e.key === "ArrowLeft") n = (i + TABS.length - 1) % TABS.length; else if (e.key === "Home") n = 0; else if (e.key === "End") n = TABS.length - 1;
+    if (n == null) return; e.preventDefault(); showTab(TABS[n], true);
+  });
+  window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
+  showTab(location.hash.slice(1));
 }
 
 /* ---------- boot ---------- */
@@ -368,7 +483,7 @@ function renderRuns() {
   const seg = document.getElementById("range");
   RANGES.forEach(([lbl, d]) => { const b = el("button", { type: "button", "aria-pressed": String(d === rangeDays) }, lbl);
     b.onclick = () => { rangeDays = d; seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderAll(); }; seg.append(b); });
-  renderKpis(); renderAll(); renderPlan(); renderRuns();
+  renderKpis(); renderAll(); renderPlan(); renderRuns(); initTabs();
 })();
 </script>
 </body>
