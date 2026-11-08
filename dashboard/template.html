@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marathon Training Dashboard</title>
+<meta name="description" content="Training load, recovery and plan progress for the MK Marathon, 3 May 2027.">
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb;
+  --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,.10);
+  --s1: #2a78d6; --s2: #eb6834; --good: #006300; --wash: rgba(11,11,11,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19;
+    --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,.10);
+    --s1: #3987e5; --s2: #d95926; --good: #0ca30c; --wash: rgba(255,255,255,.06);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19;
+  --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #898781;
+  --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,.10);
+  --s1: #3987e5; --s2: #d95926; --good: #0ca30c; --wash: rgba(255,255,255,.06);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 22px; margin: 0 0 4px; font-weight: 650; }
+h2 { font-size: 16px; margin: 0; font-weight: 600; }
+.eyebrow { color: var(--ink-2); font-size: 13px; margin: 0 0 4px; }
+.sub { color: var(--ink-2); margin: 0; font-size: 13px; }
+.hero { display: flex; align-items: baseline; gap: 10px; margin: 16px 0 4px; flex-wrap: wrap; }
+.hero b { font-size: 56px; line-height: 1; font-weight: 650; }
+.hero span { font-size: 18px; color: var(--ink-2); }
+.filters { display: flex; gap: 8px; align-items: center; margin: 20px 0 16px; flex-wrap: wrap; }
+.filters label { color: var(--ink-2); font-size: 13px; margin-right: 4px; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button { border: 0; background: transparent; color: var(--ink-2); padding: 7px 14px; font: inherit; font-size: 13px; cursor: pointer; }
+.seg button:hover { background: var(--wash); }
+.seg button[aria-pressed="true"] { color: var(--ink); font-weight: 600; background: var(--wash); box-shadow: inset 0 -2px 0 var(--s1); }
+button:focus-visible, svg:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.tile, .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+.tile .lbl { color: var(--ink-2); font-size: 13px; }
+.tile .val { font-size: 28px; font-weight: 650; line-height: 1.2; margin-top: 2px; }
+.tile .val small { font-size: 14px; font-weight: 500; color: var(--ink-2); margin-left: 3px; }
+.tile .dl { font-size: 12px; color: var(--ink-2); margin-top: 2px; min-height: 17px; }
+.tile .dl.good { color: var(--good); }
+.tile svg { display: block; margin-top: 6px; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.grid > *, .kpis > * { min-width: 0; }
+.card.wide { grid-column: 1 / -1; }
+.card header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+.card header p { margin: 2px 0 0; color: var(--ink-2); font-size: 13px; }
+.tbl-btn { border: 1px solid var(--border); background: transparent; color: var(--ink-2); border-radius: 6px; padding: 4px 10px; font: inherit; font-size: 12px; cursor: pointer; white-space: nowrap; }
+.tbl-btn:hover { background: var(--wash); }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); margin: 4px 0 2px; }
+.legend i { display: inline-block; vertical-align: middle; margin-right: 6px; }
+.legend .sw { width: 12px; height: 12px; border-radius: 3px; }
+.legend .ln { width: 16px; height: 2px; border-radius: 1px; }
+.plot { position: relative; min-width: 0; }
+.plot svg { display: block; width: 100%; touch-action: pan-y; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0,0,0,.12); border-radius: 8px; padding: 8px 10px; font-size: 12px; min-width: 130px; max-width: 280px; z-index: 2; display: none; }
+.tip .h { color: var(--ink-2); margin-bottom: 4px; }
+.tip .row { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+.tip .row i { width: 12px; height: 3px; border-radius: 2px; flex: none; }
+.tip .row b { font-size: 14px; font-weight: 650; color: var(--ink); }
+.tip .row span { color: var(--ink-2); }
+.tip .x { color: var(--ink-2); margin-top: 4px; line-height: 1.35; }
+.tablewrap { max-height: 340px; overflow: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { color: var(--ink-2); font-weight: 600; position: sticky; top: 0; background: var(--surface); }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+tr.now td { background: var(--wash); font-weight: 600; }
+.races { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.race { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.race .d { color: var(--ink-2); font-size: 12px; }
+.race .n { font-weight: 600; margin-top: 2px; }
+.race .r { font-size: 20px; font-weight: 650; margin-top: 2px; }
+footer { color: var(--ink-3); font-size: 12px; margin-top: 24px; line-height: 1.5; }
+@media (max-width: 760px) { .grid { grid-template-columns: minmax(0, 1fr); } .hero b { font-size: 48px; } }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Marathon training dashboard</p>
+  <h1>MK Marathon &middot; Monday 3 May 2027</h1>
+  <div class="hero"><b id="days">-</b><span id="daysLbl">days to go</span></div>
+  <p class="sub" id="asof"></p>
+
+  <div class="filters" role="group" aria-label="Time range">
+    <label>Time range</label>
+    <div class="seg" id="range"></div>
+  </div>
+
+  <section class="kpis" id="kpis" aria-label="Headline numbers"></section>
+
+  <section class="grid">
+    <div class="card wide" id="c-weekly"></div>
+    <div class="card" id="c-rhr"></div>
+    <div class="card" id="c-hrv"></div>
+    <div class="card" id="c-vo2"></div>
+    <div class="card" id="c-sleep"></div>
+    <div class="card wide" id="c-park"></div>
+    <div class="card wide" id="c-plan"></div>
+    <div class="card wide" id="c-runs"></div>
+  </section>
+
+  <footer>
+    Personal training data from Apple Health, parkrun and the training plan, shown as weekly/monthly aggregates and per-run
+    date, distance, pace and average heart rate. No routes, locations, start times or raw samples are published.
+    Apple's VO2 max is an estimate: read the direction, not the exact value. <span id="built"></span>
+  </footer>
+</main>
+
+<script>
+const DATA = /*__DATA__*/null;
+const DAY = 86400000;
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const T = s => Date.parse(s + "T00:00:00Z");
+const dfmt = ms => { const d = new Date(ms); return d.getUTCDate() + " " + MON[d.getUTCMonth()] + " " + d.getUTCFullYear(); };
+const dshort = ms => { const d = new Date(ms); return d.getUTCDate() + " " + MON[d.getUTCMonth()]; };
+const mfmt = ms => { const d = new Date(ms); return MON[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slice(2); };
+const mmss = sec => { sec = Math.round(sec); const m = Math.floor(sec / 60), s = sec % 60; return m + ":" + String(s).padStart(2, "0"); };
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs = {}, text) => { const e = document.createElement(tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; };
+const sv = (tag, attrs = {}) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+
+const asOf = T(DATA.as_of);
+const raceMs = T(DATA.races[DATA.races.length - 1].date);
+const RANGES = [["6 months", 183], ["1 year", 365], ["3 years", 1096], ["All", 99999]];
+let rangeDays = 365;
+
+function niceTicks(lo, hi, n = 5) {
+  const span = hi - lo || 1, raw = span / n, p = Math.pow(10, Math.floor(Math.log10(raw)));
+  const f = raw / p, step = (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p;
+  const a = Math.floor(lo / step) * step, b = Math.ceil(hi / step) * step, out = [];
+  for (let v = a; v <= b + step / 2; v += step) out.push(+v.toFixed(6));
+  return out;
+}
+function monthTicks(t0, t1, maxN = 6) {
+  const s = new Date(t0), months = (new Date(t1).getUTCFullYear() - s.getUTCFullYear()) * 12 + new Date(t1).getUTCMonth() - s.getUTCMonth();
+  const k = Math.max(1, Math.ceil(months / maxN)), out = [];
+  let y = s.getUTCFullYear(), m = s.getUTCMonth() + 1;
+  for (;;) { const t = Date.UTC(y, m, 1); if (t > t1) break; if (t >= t0) out.push(t); m += k; y += Math.floor(m / 12); m %= 12; }
+  return out;
+}
+
+/* ---------- generic chart ---------- */
+function chart(card, spec) {
+  card.replaceChildren();
+  const head = el("header"); const tt = el("div"); tt.append(el("h2", {}, spec.title)); tt.append(el("p", {}, spec.subtitle || ""));
+  const btn = el("button", { class: "tbl-btn", type: "button", "aria-pressed": "false" }, "Table view");
+  head.append(tt, btn); card.append(head);
+  if (spec.series.length > 1) {
+    const lg = el("div", { class: "legend" });
+    for (const s of spec.series) { const i = el("i", { class: s.type === "bar" ? "sw" : "ln" }); i.style.background = "var(" + s.color + ")"; const w = el("span"); w.append(i, document.createTextNode(s.name)); lg.append(w); }
+    card.append(lg);
+  }
+  const plot = el("div", { class: "plot" }); const tip = el("div", { class: "tip" }); const tableBox = el("div", { class: "tablewrap" });
+  tableBox.hidden = true; card.append(plot, tableBox);
+
+  // table twin
+  const tbl = el("table"); const tr0 = el("tr");
+  spec.tableCols.forEach((c, i) => tr0.append(el("th", i ? { class: "n" } : {}, c)));
+  { const th = el("thead"); th.append(tr0); tbl.append(th); }
+  const tb = el("tbody");
+  spec.tableRows.forEach(r => { const tr = el("tr"); r.forEach((v, i) => tr.append(el("td", i ? { class: "n" } : {}, v == null ? "-" : String(v)))); tb.append(tr); });
+  tbl.append(tb); tableBox.append(tbl);
+  btn.onclick = () => { const on = btn.getAttribute("aria-pressed") !== "true"; btn.setAttribute("aria-pressed", on); btn.textContent = on ? "Chart view" : "Table view"; tableBox.hidden = !on; plot.hidden = on; };
+
+  const all = spec.series.flatMap(s => s.pts);
+  if (!all.length) { plot.append(el("p", { class: "sub" }, "No data in this time range. Try a longer range.")); return; }
+  const xs = [...new Set(all.map(p => p.t))].sort((a, b) => a - b);
+  const [x0, x1] = spec.xDomain;
+
+  function draw() {
+    plot.querySelectorAll("svg").forEach(n => n.remove());
+    const W = Math.max(280, plot.clientWidth || 600), H = spec.height || 250;
+    const m = { l: 46, r: 14, t: 10, b: 28 }, pw = W - m.l - m.r, ph = H - m.t - m.b;
+    let lo = Infinity, hi = -Infinity;
+    all.forEach(p => { lo = Math.min(lo, p.y); hi = Math.max(hi, p.y); });
+    if (spec.zero) lo = 0;
+    const ticks = niceTicks(lo - (spec.zero ? 0 : (hi - lo) * 0.08), hi + (hi - lo) * 0.05 || 1, 5);
+    const y0 = ticks[0], y1 = ticks[ticks.length - 1];
+    const X = t => m.l + (t - x0) / (x1 - x0) * pw, Y = v => m.t + ph - (v - y0) / (y1 - y0) * ph;
+    const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", tabindex: 0, "aria-label": spec.title + ". " + (spec.subtitle || "") + " Use the table view for exact values." });
+    ticks.forEach(v => {
+      svg.append(sv("line", { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: "var(--grid)", "stroke-width": 1 }));
+      const tx = sv("text", { x: m.l - 8, y: Y(v) + 4, "text-anchor": "end", fill: "var(--ink-3)", "font-size": 11 }); tx.textContent = spec.yFmt(v); svg.append(tx);
+    });
+    svg.append(sv("line", { x1: m.l, x2: W - m.r, y1: Y(y0), y2: Y(y0), stroke: "var(--axis)", "stroke-width": 1 }));
+    monthTicks(x0, x1).forEach(t => { const tx = sv("text", { x: X(t), y: H - 8, "text-anchor": "middle", fill: "var(--ink-3)", "font-size": 11 }); tx.textContent = mfmt(t); svg.append(tx); });
+    if (spec.markers) spec.markers.forEach(mk => { if (mk.t >= x0 && mk.t <= x1) {
+      svg.append(sv("line", { x1: X(mk.t), x2: X(mk.t), y1: m.t, y2: m.t + ph, stroke: "var(--ink-3)", "stroke-width": 1 }));
+      const tx = sv("text", { x: X(mk.t) - 4, y: m.t + 10, "text-anchor": "end", fill: "var(--ink-2)", "font-size": 11 }); tx.textContent = mk.label; svg.append(tx); } });
+
+    // bars: split slot between bar series that share an x
+    const barSeries = spec.series.filter(s => s.type === "bar");
+    if (barSeries.length) {
+      const nWeeks = (x1 - x0) / (7 * DAY), slot = pw / Math.max(1, nWeeks);
+      const bw = Math.min(24, Math.max(2, slot * 0.72));
+      const byT = new Map(); barSeries.forEach(s => s.pts.forEach(p => { if (!byT.has(p.t)) byT.set(p.t, []); byT.get(p.t).push({ s, p }); }));
+      byT.forEach((list, t) => list.forEach(({ s, p }, i) => {
+        const w = bw / list.length, xa = X(t + 3.5 * DAY) - bw / 2 + i * w, xb = xa + w - (list.length > 1 ? 1 : 0), yt = Y(p.y), yb = Y(0);
+        const h = yb - yt; if (h <= 0.5) return; const r = Math.min(4, h, (xb - xa) / 2);
+        svg.append(sv("path", { d: `M${xa},${yb}L${xa},${yt + r}Q${xa},${yt} ${xa + r},${yt}L${xb - r},${yt}Q${xb},${yt} ${xb},${yt + r}L${xb},${yb}Z`, fill: "var(" + s.color + ")", class: "mk", "data-t": t, "data-s": s.name }));
+      }));
+    }
+    spec.series.filter(s => s.type === "line").forEach(s => {
+      let d = "", prev = null;
+      s.pts.forEach(p => { const gap = spec.maxGap && prev != null && p.t - prev > spec.maxGap; d += (prev == null || gap ? "M" : "L") + X(p.t).toFixed(1) + "," + Y(p.y).toFixed(1); prev = p.t; });
+      svg.append(sv("path", { d, fill: "none", stroke: "var(" + s.color + ")", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round", opacity: s.faint ? 0.55 : 1 }));
+      if (s.pts.length === 1) svg.append(sv("circle", { cx: X(s.pts[0].t), cy: Y(s.pts[0].y), r: 4, fill: "var(" + s.color + ")" }));
+    });
+    spec.series.filter(s => s.type === "dot").forEach(s => s.pts.forEach(p =>
+      svg.append(sv("circle", { cx: X(p.t), cy: Y(p.y), r: 4.5, fill: "var(" + s.color + ")", stroke: "var(--surface)", "stroke-width": 2 }))));
+
+    // hover layer
+    const cross = sv("line", { y1: m.t, y2: m.t + ph, stroke: "var(--ink-3)", "stroke-width": 1, visibility: "hidden" });
+    const hl = sv("g"); svg.append(cross, hl);
+    function showAt(i) {
+      const t = xs[i]; const px = X(t + (barSeries.length ? 3.5 * DAY : 0));
+      cross.setAttribute("x1", px); cross.setAttribute("x2", px); cross.setAttribute("visibility", "visible");
+      hl.replaceChildren(); tip.replaceChildren(); const rows = [];
+      spec.series.forEach(s => { const p = s.pts.find(q => q.t === t); if (!p) return; rows.push([s, p]);
+        if (s.type !== "bar") hl.append(sv("circle", { cx: X(t), cy: Y(p.y), r: 4, fill: "var(" + s.color + ")", stroke: "var(--surface)", "stroke-width": 2 })); });
+      if (!rows.length) { tip.style.display = "none"; return; }
+      tip.append(el("div", { class: "h" }, (spec.tipDate || dfmt)(t)));
+      rows.forEach(([s, p]) => { const r = el("div", { class: "row" }); const k = el("i"); k.style.background = "var(" + s.color + ")";
+        r.append(k, el("b", {}, spec.valFmt(p.y)), el("span", {}, s.name)); tip.append(r); if (p.x) tip.append(el("div", { class: "x" }, p.x)); });
+      tip.style.display = "block";
+      const tw = tip.offsetWidth, left = Math.min(Math.max(4, px + 12), W - tw - 4);
+      tip.style.left = (px + 12 + tw > W ? Math.max(4, px - tw - 12) : left) + "px"; tip.style.top = "8px";
+    }
+    function near(clientX) { const rc = svg.getBoundingClientRect(), t = x0 + (clientX - rc.left - m.l * rc.width / W) / (pw * rc.width / W) * (x1 - x0);
+      let b = 0, bd = Infinity; xs.forEach((v, i) => { const d = Math.abs(v + (barSeries.length ? 3.5 * DAY : 0) - t); if (d < bd) { bd = d; b = i; } }); return b; }
+    let idx = xs.length - 1;
+    svg.addEventListener("pointermove", e => { idx = near(e.clientX); showAt(idx); });
+    svg.addEventListener("pointerleave", () => { cross.setAttribute("visibility", "hidden"); hl.replaceChildren(); tip.style.display = "none"; });
+    svg.addEventListener("keydown", e => { if (e.key === "ArrowLeft") idx = Math.max(0, idx - 1); else if (e.key === "ArrowRight") idx = Math.min(xs.length - 1, idx + 1); else return; e.preventDefault(); showAt(idx); });
+    svg.addEventListener("blur", () => { cross.setAttribute("visibility", "hidden"); hl.replaceChildren(); tip.style.display = "none"; });
+    plot.append(svg, tip);
+  }
+  draw(); new ResizeObserver(() => draw()).observe(plot);
+}
+
+/* ---------- data helpers ---------- */
+const lastNonNull = (arr, key, before = Infinity) => { for (let i = arr.length - 1; i >= 0; i--) if (arr[i][key] != null && T(arr[i].d) <= before) return arr[i]; return null; };
+const sparkline = (vals) => {
+  const w = 120, h = 26, v = vals.filter(x => x != null); if (v.length < 2) return document.createElement("span");
+  const lo = Math.min(...v), hi = Math.max(...v), svg = sv("svg", { width: w, height: h, viewBox: `0 0 ${w} ${h}`, "aria-hidden": "true" });
+  const pts = v.map((x, i) => [2 + i / (v.length - 1) * (w - 4), 3 + (1 - (x - lo) / (hi - lo || 1)) * (h - 6)]);
+  svg.append(sv("polyline", { points: pts.map(p => p.join(",")).join(" "), fill: "none", stroke: "var(--ink-3)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+  const l = pts[pts.length - 1]; svg.append(sv("circle", { cx: l[0], cy: l[1], r: 3.5, fill: "var(--s1)", stroke: "var(--surface)", "stroke-width": 2 })); return svg;
+};
+
+function renderKpis() {
+  const box = document.getElementById("kpis"); box.replaceChildren();
+  const D = DATA.daily;
+  const tile = (label, val, unit, delta, good, spark) => {
+    const t = el("div", { class: "tile" }); t.append(el("div", { class: "lbl" }, label));
+    const v = el("div", { class: "val" }, val); if (unit) v.append(el("small", {}, unit)); t.append(v);
+    t.append(el("div", { class: "dl" + (good ? " good" : "") }, delta || "")); if (spark) t.append(spark); box.append(t);
+  };
+  const trend = (key, now, ago, dec, upGood, unit) => { if (now == null || ago == null) return ["", false]; const d = now - ago; if (Math.abs(d) < 0.05) return ["no change vs 90 days ago", false];
+    return [(d > 0 ? "▲ +" : "▼ ") + Math.abs(d).toFixed(dec) + " " + unit + " vs 90 days ago", upGood ? d > 0 : d < 0]; };
+  const sample = (key, n) => { const out = []; for (let i = n; i >= 0; i--) { const r = lastNonNull(D, key, asOf - i * 7 * DAY); out.push(r ? r[key] : null); } return out; };
+  const rh = lastNonNull(D, "rhr28"), rh0 = lastNonNull(D, "rhr28", asOf - 90 * DAY);
+  if (rh) { const [d, g] = trend("rhr28", rh.rhr28, rh0 && rh0.rhr28, 1, false, "bpm"); tile("Resting heart rate (28-day)", rh.rhr28.toFixed(1), "bpm", d, g, sparkline(sample("rhr7", 12))); }
+  const hv = lastNonNull(D, "hrv28"), hv0 = lastNonNull(D, "hrv28", asOf - 90 * DAY);
+  if (hv) { const [d, g] = trend("hrv28", hv.hrv28, hv0 && hv0.hrv28, 1, true, "ms"); tile("HRV (28-day)", hv.hrv28.toFixed(1), "ms", d, g, sparkline(sample("hrv7", 12))); }
+  const V = DATA.vo2; if (V.length) { const v = V[V.length - 1], p = V.filter(x => T(x.d) <= T(v.d) - 85 * DAY).pop(); const dd = p ? v.v - p.v : null;
+    tile("VO2 max (Apple estimate)", v.v.toFixed(1), "", dd == null ? "" : (dd >= 0 ? "▲ +" : "▼ ") + Math.abs(dd).toFixed(1) + " vs 3 months ago", dd != null && dd > 0.05, sparkline(V.slice(-12).map(x => x.v))); }
+  const W = DATA.weekly.filter(w => T(w.d) <= asOf), l8 = W.slice(-8), p8 = W.slice(-16, -8), avg = a => a.reduce((s, w) => s + (w.km || 0), 0) / (a.length || 1);
+  if (l8.length) tile("Weekly distance (8-week avg)", avg(l8).toFixed(1), "km", p8.length ? "prior 8 weeks: " + avg(p8).toFixed(1) + " km" : "", false, sparkline(W.slice(-12).map(w => w.km)));
+  const mar = DATA.races[0]; tile("Last marathon", mar.result, "", dfmt(T(mar.date)), false, null);
+  const P = DATA.parkruns, lp = P[P.length - 1], pb = P.reduce((a, b) => b.sec < a.sec ? b : a);
+  tile("Latest parkrun 5k", lp.t, "", dfmt(T(lp.d)) + " · PB " + pb.t, false, null);
+}
+
+function renderAll() {
+  const start = rangeDays >= 99999 ? -Infinity : asOf - rangeDays * DAY;
+  const inR = t => t >= start;
+  const D = DATA.daily.filter(d => inR(T(d.d)));
+  const x0 = rangeDays >= 99999 ? T(DATA.weekly[0].d) : start;
+
+  // weekly mileage: actual vs plan
+  const act = DATA.weekly.filter(w => inR(T(w.d)) && w.km != null).map(w => ({ t: T(w.d), y: w.km, x: w.runs + " runs · long run " + (w.long != null ? w.long + " km" : "-") }));
+  const plan = DATA.plan.map(p => ({ t: T(p.start), y: p.km, x: "Week " + p.week + " · " + p.phase + (p.long_km ? " · long run " + p.long_km + " km" : "") + "\n" + p.key }));
+  plan.forEach(p => { p.x = p.x.split("\n")[0]; });
+  chart(document.getElementById("c-weekly"), {
+    title: "Weekly distance: actual and planned", subtitle: "Kilometres run per week (Mon-Sun). The plan starts Mon 9 Nov 2026 and builds to the marathon.",
+    height: 270, zero: true, xDomain: [x0, raceMs + 7 * DAY], yFmt: v => v, valFmt: v => v.toFixed(0) + " km",
+    series: [{ name: "Actual", color: "--s1", type: "bar", pts: act }, { name: "Planned", color: "--s2", type: "bar", pts: plan }],
+    tableCols: ["Week starting", "Actual (km)", "Planned (km)"],
+    tableRows: [...new Set([...act.map(a => a.t), ...plan.map(p => p.t)])].sort((a, b) => b - a).map(t => [dfmt(t), (act.find(a => a.t === t) || {}).y, (plan.find(p => p.t === t) || {}).y]),
+  });
+
+  const line = (key, color, name, faint) => ({ name, color, type: "line", faint, pts: D.filter(d => d[key] != null).map(d => ({ t: T(d.d), y: d[key] })) });
+  const weeklySample = (keys) => D.filter((_, i) => i % 7 === 0).reverse().map(d => [dfmt(T(d.d)), ...keys.map(k => d[k])]);
+  const dx = [x0, asOf], gap = 14 * DAY;
+  const latest = (k, u, dec = 1) => { const r = lastNonNull(DATA.daily, k); return r ? "Latest 7-day average " + r[k].toFixed(dec) + " " + u : ""; };
+  chart(document.getElementById("c-rhr"), { title: "Resting heart rate", subtitle: latest("rhr7", "bpm") + ". Lower is better.", xDomain: dx, maxGap: gap, yFmt: v => v, valFmt: v => v.toFixed(1) + " bpm",
+    series: [line("rhr28", "--ink-3", "28-day baseline", false), line("rhr7", "--s1", "7-day average")],
+    tableCols: ["Date", "7-day avg (bpm)", "28-day avg (bpm)"], tableRows: weeklySample(["rhr7", "rhr28"]) });
+  chart(document.getElementById("c-hrv"), { title: "Heart rate variability (SDNN)", subtitle: latest("hrv7", "ms") + ". Higher usually means better recovered.", xDomain: dx, maxGap: gap, yFmt: v => v, valFmt: v => v.toFixed(1) + " ms",
+    series: [line("hrv28", "--ink-3", "28-day baseline", false), line("hrv7", "--s1", "7-day average")],
+    tableCols: ["Date", "7-day avg (ms)", "28-day avg (ms)"], tableRows: weeklySample(["hrv7", "hrv28"]) });
+
+  const V = DATA.vo2.filter(v => inR(T(v.d)));
+  chart(document.getElementById("c-vo2"), { title: "VO2 max", subtitle: "Monthly average of Apple Watch estimates (mL/min/kg).", xDomain: [x0, asOf], yFmt: v => v, valFmt: v => v.toFixed(1), tipDate: t => { const d = new Date(t); return MON[d.getUTCMonth()] + " " + d.getUTCFullYear(); },
+    series: [{ name: "VO2 max", color: "--s1", type: "line", pts: V.map(v => ({ t: T(v.d), y: v.v })) }],
+    tableCols: ["Month", "VO2 max"], tableRows: [...V].reverse().map(v => [mfmt(T(v.d)), v.v]) });
+  chart(document.getElementById("c-sleep"), { title: "Sleep", subtitle: latest("sleep7", "h", 2).replace("7-day average ", "7-day average ") + " per night.", xDomain: dx, maxGap: gap, yFmt: v => v, valFmt: v => v.toFixed(1) + " h",
+    series: [{ name: "7-day average", color: "--s1", type: "line", pts: D.filter(d => d.sleep7 != null).map(d => ({ t: T(d.d), y: d.sleep7 })) }],
+    tableCols: ["Date", "7-day avg (hours)"], tableRows: weeklySample(["sleep7"]) });
+
+  const P = DATA.parkruns.filter(p => inR(T(p.d)));
+  chart(document.getElementById("c-park"), { title: "parkrun 5k times", subtitle: "Each dot is one parkrun. Most are hard efforts, so they work as a 5k fitness check.", xDomain: [rangeDays >= 99999 ? T(DATA.parkruns[0].d) - 30 * DAY : start, asOf + 7 * DAY],
+    yFmt: v => mmss(v * 60), valFmt: v => mmss(v * 60), height: 240,
+    series: [{ name: "5k time", color: "--s1", type: "dot", pts: P.map(p => ({ t: T(p.d), y: p.sec / 60, x: "Position " + p.pos })) }],
+    tableCols: ["Date", "Time", "Position"], tableRows: [...P].reverse().map(p => [dfmt(T(p.d)), p.t, p.pos]) });
+}
+
+/* ---------- static sections ---------- */
+function renderPlan() {
+  const card = document.getElementById("c-plan"); card.replaceChildren();
+  const head = el("header"); const tt = el("div"); tt.append(el("h2", {}, "Training plan")); tt.append(el("p", {}, "25 weeks, speed first. The goal time is decided at two test points, not up front.")); head.append(tt); card.append(head);
+  const rc = el("div", { class: "races" });
+  DATA.races.forEach(r => { const d = el("div", { class: "race" }); d.append(el("div", { class: "d" }, dfmt(T(r.date))), el("div", { class: "n" }, r.name)); if (r.result) d.append(el("div", { class: "r" }, r.result)); rc.append(d); });
+  card.append(rc);
+  const wrap = el("div", { class: "tablewrap" }); const tbl = el("table"); const h = el("tr");
+  ["Wk", "Week starting", "Phase", "km", "Long run", "Key sessions"].forEach((c, i) => h.append(el("th", i === 0 || i === 3 ? { class: "n" } : {}, c))); { const th = el("thead"); th.append(h); tbl.append(th); }
+  const tb = el("tbody"), now = Date.now();
+  DATA.plan.forEach(p => { const tr = el("tr", T(p.start) <= now && now < T(p.start) + 7 * DAY ? { class: "now", "aria-current": "date" } : {});
+    [p.week, dshort(T(p.start)), p.phase, p.km, p.long, p.key].forEach((v, i) => tr.append(el("td", i === 0 || i === 3 ? { class: "n" } : {}, String(v)))); tb.append(tr); });
+  tbl.append(tb); wrap.append(tbl); card.append(wrap);
+  const cur = tb.querySelector("tr.now"); if (cur) wrap.scrollTop = cur.offsetTop - 60;
+}
+function renderRuns() {
+  const card = document.getElementById("c-runs"); card.replaceChildren();
+  const head = el("header"); const tt = el("div"); tt.append(el("h2", {}, "Recent runs")); tt.append(el("p", {}, "Runs from the last 12 months of data: date, distance, pace and average heart rate.")); head.append(tt); card.append(head);
+  const wrap = el("div", { class: "tablewrap" }); const tbl = el("table"); const h = el("tr");
+  ["Date", "Distance (km)", "Pace (min/km)", "Avg HR (bpm)"].forEach((c, i) => h.append(el("th", i ? { class: "n" } : {}, c))); { const th = el("thead"); th.append(h); tbl.append(th); }
+  const tb = el("tbody"); DATA.runs.forEach(r => { const tr = el("tr");
+    [dfmt(T(r.d)), r.km.toFixed(1), r.pace ? mmss(r.pace * 60) : "-", r.hr == null ? "-" : r.hr].forEach((v, i) => tr.append(el("td", i ? { class: "n" } : {}, String(v)))); tb.append(tr); });
+  tbl.append(tb); wrap.append(tbl); card.append(wrap);
+}
+
+/* ---------- boot ---------- */
+(function () {
+  const left = Math.ceil((raceMs - Date.now()) / DAY);
+  document.getElementById("days").textContent = left > 0 ? left : 0;
+  document.getElementById("daysLbl").textContent = left > 1 ? "days to the MK Marathon" : left === 1 ? "day to the MK Marathon" : "Race day";
+  document.getElementById("asof").textContent = "Health data through " + dfmt(asOf) + ".";
+  document.getElementById("built").textContent = "Page built " + dfmt(T(DATA.built)) + ".";
+  const seg = document.getElementById("range");
+  RANGES.forEach(([lbl, d]) => { const b = el("button", { type: "button", "aria-pressed": String(d === rangeDays) }, lbl);
+    b.onclick = () => { rangeDays = d; seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderAll(); }; seg.append(b); });
+  renderKpis(); renderAll(); renderPlan(); renderRuns();
+})();
+</script>
+</body>
+</html>
