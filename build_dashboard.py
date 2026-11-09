@@ -97,6 +97,26 @@ def parse_plan_doc():
     return sections
 
 
+def parse_daily():
+    """Day-by-day schedule from plan/daily_schedule.md -> [{week, phase, km, days:[{d, session, km}]}]."""
+    weeks, cur = [], None
+    for ln in (ROOT / "plan" / "daily_schedule.md").read_text().splitlines():
+        m = re.match(r"^## Week (\d+): (.+?) \(w/c [^)]*\), ([\d.]+) km$", ln)
+        if m:
+            cur = {"week": int(m.group(1)), "phase": m.group(2), "km": float(m.group(3)), "days": []}
+            weeks.append(cur)
+            continue
+        m = re.match(r"^\| (Mon|Tue|Wed|Thu|Fri|Sat|Sun) \| [^|]+ \| (.+) \| ([\d.]+|-) \|$", ln)
+        if m and cur is not None:
+            i = len(cur["days"])
+            d = PLAN_START + timedelta(weeks=cur["week"] - 1, days=i)
+            cur["days"].append({"d": d.isoformat(), "session": m.group(2),
+                                "km": 0 if m.group(3) == "-" else float(m.group(3))})
+    if len(weeks) != 25 or any(len(w["days"]) != 7 for w in weeks):
+        raise SystemExit("plan/daily_schedule.md: expected 25 weeks x 7 days; run build_schedule.py")
+    return weeks
+
+
 def main():
     s = ROOT / "summary"
     weekly = pd.read_csv(s / "weekly_running.csv", parse_dates=["week_start"])
@@ -126,6 +146,7 @@ def main():
                   "hr": r(x.avg_hr, 0)} for x in recent.itertuples()],
         "plan": parse_plan(),
         "plan_doc": parse_plan_doc(),
+        "schedule": parse_daily(),
         "races": RACES,
     }
     blob = json.dumps(data, separators=(",", ":"))

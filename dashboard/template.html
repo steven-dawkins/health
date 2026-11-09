@@ -414,10 +414,35 @@ function weeksCard() {
   card._scroll = () => { const cur = tb.querySelector("tr.now"); if (cur) wrap.scrollTop = Math.max(0, cur.offsetTop - 60); };
   return card;
 }
+function dailyCard() {
+  const card = el("div", { class: "card wide", id: "c-daily" });
+  const head = el("header"); const tt = el("div"); tt.append(el("h2", {}, "Day by day")); tt.append(el("p", {}, "Pick a week to see each day's session. Distances include warm-up and cool-down.")); head.append(tt);
+  const sel = el("select", { "aria-label": "Week" });
+  const now = Date.now(); let cur = 0;
+  DATA.schedule.forEach((w, i) => { sel.append(el("option", { value: String(i) }, "Week " + w.week + " (" + dshort(T(w.days[0].d)) + ") " + w.phase)); if (T(w.days[0].d) <= now && now < T(w.days[0].d) + 7 * DAY) cur = i; });
+  sel.value = String(cur); head.append(sel); card.append(head);
+  const summ = el("p", { class: "sub" }); card.append(summ);
+  const wrap = el("div", { class: "tablewrap free" }); card.append(wrap);
+  function show() {
+    const w = DATA.schedule[+sel.value];
+    summ.textContent = "Week " + w.week + ": " + w.phase + ", " + (+w.km.toFixed(1)) + " km.";
+    wrap.replaceChildren();
+    const tbl = el("table"), h = el("tr");
+    ["Day", "Date", "Session", "km"].forEach((c, i) => h.append(el("th", i === 3 ? { class: "n" } : {}, c)));
+    { const th = el("thead"); th.append(h); tbl.append(th); }
+    const tb = el("tbody");
+    w.days.forEach(d => { const t0 = T(d.d); const tr = el("tr", t0 <= now && now < t0 + DAY ? { class: "now", "aria-current": "date" } : {});
+      tr.append(el("td", {}, new Date(t0).toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" })), el("td", {}, dshort(t0)));
+      const td = el("td"); rich(td, d.session); tr.append(td);
+      tr.append(el("td", { class: "n" }, d.km ? String(d.km) : "-")); tb.append(tr); });
+    tbl.append(tb); wrap.append(tbl);
+  }
+  sel.addEventListener("change", show); show(); return card;
+}
 function renderPlan() {
   const grid = document.getElementById("plan-grid"); grid.replaceChildren();
   DATA.plan_doc.forEach(sec => {
-    if (/^The 25 weeks/.test(sec.title)) { grid.append(weeksCard()); return; }
+    if (/^The 25 weeks/.test(sec.title)) { grid.append(weeksCard()); grid.append(dailyCard()); return; }
     const card = el("div", { class: "card wide prose" }); card.append(el("h2", {}, sec.title));
     sec.blocks.forEach(b => {
       if (b.t === "p") { const p = el("p"); rich(p, b.text); card.append(p); }
