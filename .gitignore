@@ -3,3 +3,4 @@ health_data/
 summary/
 __pycache__/
 parkrun/
+strava_data/

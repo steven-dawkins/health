@@ -231,12 +231,40 @@ def make_report(runs, weekly, daily, monthly, cov):
     return "\n".join(L)
 
 
+def add_strava(runs, path="strava_data/strava_runs.csv"):
+    """Append Strava runs that Apple Health lacks (older history, gaps). Apple wins on overlap:
+    same start within 10 min, or same date with distance within 8%."""
+    if not os.path.exists(path):
+        return runs.assign(source="apple")
+    s = pd.read_csv(path, parse_dates=["startDate"])
+    a = runs.copy()
+    a["_d"], s["_d"] = a["startDate"].dt.date, s["startDate"].dt.date
+    keep = []
+    by_day = {d: g for d, g in a.groupby("_d")}
+    for _, r in s.iterrows():
+        g = by_day.get(r["_d"])
+        dup = g is not None and (
+            ((g["startDate"] - r["startDate"]).abs() <= pd.Timedelta(minutes=10)).any()
+            or ((g["distance_km"] / r["distance_km"] - 1).abs() < 0.08).any())
+        keep.append(not dup)
+    s = s[keep].copy()
+    s["date"] = s["startDate"].dt.normalize()
+    s["max_hr"] = float("nan")
+    s["efficiency_m_per_beat"] = (s["distance_km"] * 1000) / (s["minutes"] * s["avg_hr"])
+    s["sourceName"] = "Strava"
+    a["source"], s["source"] = "apple", "strava"
+    cols = list(runs.columns) + ["source"]
+    out = pd.concat([a[cols], s[cols]]).sort_values("startDate").reset_index(drop=True)
+    print(f"Strava: added {len(s)} runs not in Apple Health ({s['startDate'].min().date()} to {s['startDate'].max().date()})")
+    return out
+
+
 def main():
     data_dir = sys.argv[1] if len(sys.argv) > 1 else "health_data"
     out_dir = sys.argv[2] if len(sys.argv) > 2 else "summary"
     os.makedirs(out_dir, exist_ok=True)
 
-    runs = build_runs(data_dir)
+    runs = add_strava(build_runs(data_dir))
     weekly = build_weekly(runs)
     daily = build_daily_recovery(data_dir)
     monthly = build_monthly_fitness(data_dir)

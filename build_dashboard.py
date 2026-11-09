@@ -12,7 +12,7 @@ PRIVACY - what is deliberately NOT published:
   * GPS routes, heart-rate samples, workout start times (dates only)
   * Workout source / device names, parkrun venue names and URLs
   * Body weight, steps, energy, sleep stages, any raw Apple Health records
-Published: the full training plan document, weekly run totals, daily 7/28-day averages of resting HR, HRV and sleep,
+Published: the full training plan document, weekly run totals (from 2015, incl. Strava-only runs), daily 7/28-day averages of resting HR, HRV and sleep,
 monthly VO2 max, per-run date/distance/pace/avg HR (last 12 months), parkrun
 date/time/position, race results, and the training plan.
 """
@@ -120,7 +120,7 @@ def parse_daily():
 def main():
     s = ROOT / "summary"
     weekly = pd.read_csv(s / "weekly_running.csv", parse_dates=["week_start"])
-    weekly = weekly[weekly.week_start >= "2022-01-01"]
+    weekly = weekly[weekly.week_start >= "2015-01-01"]
     daily = pd.read_csv(s / "daily_recovery.csv", parse_dates=["date"])
     daily = daily[daily.date >= "2022-01-01"]
     monthly = pd.read_csv(s / "monthly_fitness.csv", parse_dates=["month"])

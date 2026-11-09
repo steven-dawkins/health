@@ -19,6 +19,7 @@ Goal: build a personalised marathon training plan from the owner's Apple Health 
 | `summarize_health.py` | Reads `health_data/`, writes per-run, weekly, recovery and monthly summaries plus `report.txt`. | Yes |
 | `analyze_run.py` | Per-km/5 km splits for one run from its GPX route + HR/power/form data. Usage: `python3 analyze_run.py <route.gpx> health_data` (extract the single GPX from the zip into a scratch dir first; it lives in `apple_health_export/workout-routes/`). | Yes |
 | `parse_parkrun.py` | Parses a parkrun "all results" page **saved from the browser** (`parkrun/all.html`) into `parkrun/parkrun_results.csv`. parkrun.org.uk returns 403 to scripts, so it cannot be fetched automatically; don't try to bypass that. Verified on the real page (40 results, all Abingdon, 2013-2026). | Yes |
+| `parse_strava.py` | Reads `activities.csv` straight from the Strava bulk-export zip in `strava_data/` and writes `strava_data/strava_runs.csv` (start, km, minutes, pace, avg HR; runs only, no names/routes). `summarize_health.py` merges runs Apple Health lacks (Strava-only: 654 runs, 2013-2022 gaps) into `summary/runs.csv` with a `source` column. Apple wins on overlap (start within 10 min, or same day and distance within 8%). The Strava MCP connector was not used. | Yes |
 | `compare_parkrun.py` | Matches parkruns to Apple workouts (UK local time) -> `summary/parkrun_vs_workouts.csv`. Needs `summary/runs.csv` and `parkrun/parkrun_results.csv`. | Yes |
 | `build_schedule.py` | Generates `plan/daily_schedule.md`, the day-by-day schedule (25 weeks x 7 days) whose weekly km match the table in `plan/marathon_plan.md`. Edit the `W`/`FIXED` dicts in the script, not the generated file. | Yes |
 | `build_dashboard.py` | Builds the public dashboard `docs/index.html` from `summary/`, `parkrun/` and `plan/marathon_plan.md`, embedding a privacy-filtered data blob in `dashboard/template.html`. Run `python3 build_dashboard.py`, preview with `python3 -m http.server -d docs`. Re-run after each new health export, parkrun update or plan change. | Yes |
@@ -73,5 +74,5 @@ Even ~5:00/km to km 30, slight fade km 31-34 (5:05), then collapse from km 35 (5
 ## Conventions
 
 - `docs/` is public by design; keep `build_dashboard.py`'s privacy allowlist strict: never add routes, locations/venues, start times, device or source names, body weight or raw samples to it.
-- The health data is personal. Never commit `apple_health/`, `health_data/`, `summary/` or `parkrun/` (they are in `.gitignore`), and don't paste raw rows into issues or messages.
+- The health data is personal. Never commit `apple_health/`, `health_data/`, `summary/`, `parkrun/` or `strava_data/` (they are in `.gitignore`), and don't paste raw rows into issues or messages.
 - Keep scripts dependency-light: standard library for extraction, pandas for summarising.
