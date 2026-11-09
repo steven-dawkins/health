@@ -75,7 +75,27 @@ def build_runs(data_dir):
     w["date"] = w["startDate"].dt.normalize()
     runs = w[["date", "startDate", "distance_km", "minutes", "pace_min_km", "avg_hr", "max_hr",
               "efficiency_m_per_beat", "sourceName"]].sort_values("startDate")
-    return runs[(runs["distance_km"] > 0.5) & (runs["minutes"] > 3)].reset_index(drop=True)
+    runs = runs[(runs["distance_km"] > 0.5) & (runs["minutes"] > 3)].reset_index(drop=True)
+    return drop_double_imports(runs)
+
+
+def drop_double_imports(runs):
+    """Some old runs exist twice in Apple Health (e.g. Strava import plus a second sync, starting
+    seconds apart with ~identical distance). Keep one: the first, or the one with heart rate."""
+    keep, last = [], None
+    for i, r in runs.sort_values("startDate").iterrows():
+        if last is not None and (r["startDate"] - last["startDate"]) <= pd.Timedelta(minutes=5) \
+                and abs(r["distance_km"] / last["distance_km"] - 1) < 0.05:
+            if pd.isna(last["avg_hr"]) and pd.notna(r["avg_hr"]):
+                keep[-1] = i
+                last = r
+            continue
+        keep.append(i)
+        last = r
+    dropped = len(runs) - len(keep)
+    if dropped:
+        print(f"Dropped {dropped} double-imported runs (same start +-5 min, distance within 5%)")
+    return runs.loc[keep].sort_values("startDate").reset_index(drop=True)
 
 
 def build_weekly(runs):
