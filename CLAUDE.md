@@ -43,7 +43,7 @@ Both default to those paths when run with no arguments from the repo root. Do no
 - The set of metrics is `RECORD_TYPES` in `extract_health.py`. Add a HealthKit identifier there to extract more.
 - Timestamps are kept as wall-clock time from the export (the `+0000` suffix is dropped). Sleep is assigned to the date you woke up.
 - Sleep is the union of overlapping "asleep" intervals (Core/Deep/REM/Unspecified) so iPhone and Watch sources are not double counted. `InBed` and `Awake` are excluded.
-- Run distance comes from `totalDistance` when present, otherwise `DistanceWalkingRunning_sum` from the workout statistics (old Strava imports; assumed km). Runs under 0.5 km or 3 min are dropped.
+- Run distance comes from `totalDistance` when present, otherwise `DistanceWalkingRunning_sum` from the workout statistics (old Strava imports; assumed km). Runs under 0.5 km or 3 min, walks logged as runs (slower than 12 min/km) and double imports (same start within 5 min, distance within 5%) are dropped.
 - **Aerobic efficiency** = metres per heartbeat (`distance / (minutes * avg HR)`); higher means fitter. Compared per quarter using runs of 20+ min.
 - Weeks start on Monday.
 

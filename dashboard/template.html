@@ -127,6 +127,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 24px; line-height: 1.
     <button role="tab" id="tab-recovery" aria-controls="p-recovery" aria-selected="false" tabindex="-1">Recovery</button>
     <button role="tab" id="tab-fitness" aria-controls="p-fitness" aria-selected="false" tabindex="-1">Fitness</button>
     <button role="tab" id="tab-plan" aria-controls="p-plan" aria-selected="false" tabindex="-1">Plan</button>
+    <button role="tab" id="tab-daily" aria-controls="p-daily" aria-selected="false" tabindex="-1">Day by day</button>
     <button role="tab" id="tab-runs" aria-controls="p-runs" aria-selected="false" tabindex="-1">Runs</button>
   </div>
 
@@ -154,6 +155,9 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 24px; line-height: 1.
   </section>
   <section id="p-plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
     <div class="grid" id="plan-grid"></div>
+  </section>
+  <section id="p-daily" role="tabpanel" aria-labelledby="tab-daily" hidden>
+    <div class="grid" id="daily-grid"></div>
   </section>
   <section id="p-runs" role="tabpanel" aria-labelledby="tab-runs" hidden>
     <div class="grid"><div class="card wide" id="c-runs"></div></div>
@@ -441,8 +445,9 @@ function dailyCard() {
 }
 function renderPlan() {
   const grid = document.getElementById("plan-grid"); grid.replaceChildren();
+  const dg = document.getElementById("daily-grid"); dg.replaceChildren(); dg.append(dailyCard());
   DATA.plan_doc.forEach(sec => {
-    if (/^The 25 weeks/.test(sec.title)) { grid.append(weeksCard()); grid.append(dailyCard()); return; }
+    if (/^The 25 weeks/.test(sec.title)) { grid.append(weeksCard()); return; }
     const card = el("div", { class: "card wide prose" }); card.append(el("h2", {}, sec.title));
     sec.blocks.forEach(b => {
       if (b.t === "p") { const p = el("p"); rich(p, b.text); card.append(p); }
@@ -511,7 +516,7 @@ dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
 dlg.addEventListener("close", () => { if (dlg.open) return; const c = document.getElementById("c-detail"); if (c._ro) c._ro.disconnect(); c.replaceChildren(); });
 
 /* ---------- tabs ---------- */
-const TABS = ["overview", "recovery", "fitness", "plan", "runs"];
+const TABS = ["overview", "recovery", "fitness", "plan", "daily", "runs"];
 function showTab(id, focus) {
   if (!TABS.includes(id)) id = "overview";
   TABS.forEach(t => { const on = t === id, b = document.getElementById("tab-" + t); b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; document.getElementById("p-" + t).hidden = !on; });

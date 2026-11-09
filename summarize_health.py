@@ -76,7 +76,15 @@ def build_runs(data_dir):
     runs = w[["date", "startDate", "distance_km", "minutes", "pace_min_km", "avg_hr", "max_hr",
               "efficiency_m_per_beat", "sourceName"]].sort_values("startDate")
     runs = runs[(runs["distance_km"] > 0.5) & (runs["minutes"] > 3)].reset_index(drop=True)
-    return drop_double_imports(runs)
+    return drop_double_imports(drop_walks(runs))
+
+
+def drop_walks(runs, max_pace=12.0):
+    """Walks logged as runs (slower than 12 min/km) distort pace and are not training runs."""
+    slow = runs["minutes"] / runs["distance_km"] > max_pace
+    if slow.any():
+        print(f"Dropped {int(slow.sum())} workouts slower than {max_pace:.0f} min/km (walks logged as runs)")
+    return runs[~slow].reset_index(drop=True)
 
 
 def drop_double_imports(runs):
@@ -257,6 +265,7 @@ def add_strava(runs, path="strava_data/strava_runs.csv"):
     if not os.path.exists(path):
         return runs.assign(source="apple")
     s = pd.read_csv(path, parse_dates=["startDate"])
+    s = drop_walks(s.assign(minutes=s["minutes"]))
     a = runs.copy()
     a["_d"], s["_d"] = a["startDate"].dt.date, s["startDate"].dt.date
     keep = []
