@@ -51,7 +51,7 @@ Both default to those paths when run with no arguments from the repo root. Do no
 
 - Coverage starts at different dates per metric (see `summary/data_coverage.csv`): workouts 2014, sleep 2017, resting HR and heart rate 2020, VO2 max / HRV 2022, running power and form metrics 2023. Don't draw conclusions about trends before a metric's start date.
 - Deleted history means gaps are possible even inside the covered range; check coverage before trusting a long-range trend.
-- Apple's VO2 max is an estimate: use direction, not absolute values. Resting HR and HRV matter as trends against the 28-day baseline, not single days.
+- Apple's VO2 max is an estimate: use direction, not absolute values. Resting HR and HRV matter as trends against the 28-day average, not single days.
 - `active_energy.csv` is ~1M rows (mostly from the oldest export) and is only a rough load measure.
 
 ## Training context learned from the data (as of 2026-10-31)
