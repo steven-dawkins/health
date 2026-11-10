@@ -106,12 +106,13 @@ def parse_daily():
             cur = {"week": int(m.group(1)), "phase": m.group(2), "km": float(m.group(3)), "days": []}
             weeks.append(cur)
             continue
-        m = re.match(r"^\| (Mon|Tue|Wed|Thu|Fri|Sat|Sun) \| [^|]+ \| (.+) \| ([\d.]+|-) \|$", ln)
+        m = re.match(r"^\| (Mon|Tue|Wed|Thu|Fri|Sat|Sun) \| [^|]+ \| (.+) \| ([\d.]+|-) \| ([^|]+) \|$", ln)
         if m and cur is not None:
             i = len(cur["days"])
             d = PLAN_START + timedelta(weeks=cur["week"] - 1, days=i)
             cur["days"].append({"d": d.isoformat(), "session": m.group(2),
-                                "km": 0 if m.group(3) == "-" else float(m.group(3))})
+                                "km": 0 if m.group(3) == "-" else float(m.group(3)),
+                                "time": "" if m.group(4).strip() == "-" else m.group(4).strip()})
     if len(weeks) != 25 or any(len(w["days"]) != 7 for w in weeks):
         raise SystemExit("plan/daily_schedule.md: expected 25 weeks x 7 days; run build_schedule.py")
     return weeks
