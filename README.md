@@ -27,6 +27,23 @@ Live dashboard: https://steven-dawkins.github.io/health/
 | `plan/` | The plan and day-by-day schedule |
 | `docs/` | Published dashboard (public) |
 
+## Data sources
+
+All three sources are personal and stay on this machine (git-ignored). Only aggregates and the allowlisted fields reach `docs/`.
+
+**Apple Health (main source).** Export from the iPhone: open the Health app, tap your profile picture (top right), then **Export All Health Data**. It builds `export.zip` (can take a few minutes; 1-2 GB of XML for years of data). AirDrop or copy it to this machine and save it in `apple_health/` under a distinct name, e.g. `export-28-10-26.zip`. Do not unzip it; the scripts read the zip in place.
+- Provides workouts (runs, distance, heart rate), resting HR, HRV, sleep, VO2 max, running power and form metrics, with coverage starting at different dates per metric (workouts 2014, sleep 2017, resting HR 2020, HRV/VO2 max 2022, power and form 2023).
+- Keep older exports. Deleting history from the phone frees space but removes it from newer exports, so older zips are the only source for that data. The newest export wins on overlap, and anything only in older exports is kept.
+
+**Strava (fills gaps in run history).** Request the archive from the Strava website: **Settings > My Account > Download or Delete Your Account > Get Started > Request Your Archive**. Strava emails a link to a zip (not a download of your account deletion; ignore that option). Save the zip as-is in `strava_data/`.
+- Only `activities.csv` is read, and only for runs: start time, distance, duration and average heart rate. Names, routes and other columns are dropped.
+- Covers 2013 onwards and fills runs Apple Health lacks. Apple wins where both have the same run.
+
+**parkrun (5k results).** Open your "all results" page on parkrun.org.uk in a browser and use **File > Save Page As** to `parkrun/all.html`. parkrun blocks scripts, so it cannot be fetched automatically.
+- Gives date, time and position for every parkrun, used to track 5k fitness and compared with Apple workouts to see how hard each one was.
+
+**Cleaning applied to runs.** Workouts under 0.5 km or 3 min, walks logged as runs (slower than 12 min/km) and double imports (same start within 5 min, distance within 5%) are dropped.
+
 ## Requirements
 
 Python 3 and `pandas`. Everything else is the standard library.
