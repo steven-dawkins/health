@@ -397,10 +397,10 @@ function renderAll() {
   const dx = [x0, asOf], gap = 14 * DAY;
   const latest = (k, u, dec = 1) => { const r = lastNonNull(DATA.daily, k); return r ? "Latest 7-day average " + r[k].toFixed(dec) + " " + u : ""; };
   chart(document.getElementById("c-rhr"), { title: "Resting heart rate", subtitle: latest("rhr7", "bpm") + ". Lower is better.", xDomain: dx, maxGap: gap, yFmt: v => v, valFmt: v => v.toFixed(1) + " bpm",
-    series: [line("rhr28", "--ink-3", "28-day baseline", false), line("rhr7", "--s1", "7-day average")],
+    series: [line("rhr28", "--ink-3", "28-day average", false), line("rhr7", "--s1", "7-day average")],
     tableCols: ["Date", "7-day avg (bpm)", "28-day avg (bpm)"], tableRows: weeklySample(["rhr7", "rhr28"]) });
   chart(document.getElementById("c-hrv"), { title: "Heart rate variability (SDNN)", subtitle: latest("hrv7", "ms") + ". Higher usually means better recovered.", xDomain: dx, maxGap: gap, yFmt: v => v, valFmt: v => v.toFixed(1) + " ms",
-    series: [line("hrv28", "--ink-3", "28-day baseline", false), line("hrv7", "--s1", "7-day average")],
+    series: [line("hrv28", "--ink-3", "28-day average", false), line("hrv7", "--s1", "7-day average")],
     tableCols: ["Date", "7-day avg (ms)", "28-day avg (ms)"], tableRows: weeklySample(["hrv7", "hrv28"]) });
 
   const V = DATA.vo2.filter(v => inR(T(v.d)));
