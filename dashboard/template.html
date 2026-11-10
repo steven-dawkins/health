@@ -129,7 +129,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 24px; line-height: 1.
     <button role="tab" id="tab-recovery" aria-controls="p-recovery" aria-selected="false" tabindex="-1">Recovery</button>
     <button role="tab" id="tab-fitness" aria-controls="p-fitness" aria-selected="false" tabindex="-1">Fitness</button>
     <button role="tab" id="tab-plan" aria-controls="p-plan" aria-selected="false" tabindex="-1">Plan</button>
-    <button role="tab" id="tab-daily" aria-controls="p-daily" aria-selected="false" tabindex="-1">Day by day</button>
+    <button role="tab" id="tab-daily" aria-controls="p-daily" aria-selected="false" tabindex="-1">Plan - Day by day</button>
     <button role="tab" id="tab-runs" aria-controls="p-runs" aria-selected="false" tabindex="-1">Runs</button>
   </div>
 
@@ -422,7 +422,7 @@ function weeksCard() {
 }
 function dailyCard() {
   const card = el("div", { class: "card wide", id: "c-daily" });
-  const head = el("header"); const tt = el("div"); tt.append(el("h2", {}, "Day by day")); tt.append(el("p", {}, "Pick a week to see each day's session. Distances include warm-up and cool-down. Times are rough estimates from the plan's paces.")); head.append(tt);
+  const head = el("header"); const tt = el("div"); tt.append(el("h2", {}, "Plan - Day by day")); tt.append(el("p", {}, "Pick a week to see each day's session. Distances include warm-up and cool-down. Times are rough estimates from the plan's paces.")); head.append(tt);
   const sel = el("select", { "aria-label": "Week" });
   const now = Date.now(); let cur = 0;
   DATA.schedule.forEach((w, i) => { sel.append(el("option", { value: String(i) }, "Week " + w.week + " (" + dshort(T(w.days[0].d)) + ") " + w.phase)); if (T(w.days[0].d) <= now && now < T(w.days[0].d) + 7 * DAY) cur = i; });
@@ -435,7 +435,8 @@ function dailyCard() {
   function show() {
     const w = DATA.schedule[+sel.value];
     prev.disabled = +sel.value === 0; next.disabled = +sel.value === DATA.schedule.length - 1;
-    summ.textContent = "Week " + w.week + ": " + w.phase + ", " + (+w.km.toFixed(1)) + " km.";
+    const mins = w.days.reduce((a, d) => { const m = /^(\d+):(\d\d)$/.exec(d.time || ""), n = /^(\d+) min$/.exec(d.time || ""); return a + (m ? +m[1] * 60 + +m[2] : n ? +n[1] : 0); }, 0);
+    summ.textContent = "Week " + w.week + ": " + w.phase + ", " + (+w.km.toFixed(1)) + " km, about " + Math.floor(mins / 60) + " h " + String(mins % 60).padStart(2, "0") + " min running.";
     wrap.replaceChildren();
     const tbl = el("table"), h = el("tr");
     ["Day", "Date", "Session", "km", "Est. time"].forEach((c, i) => h.append(el("th", i >= 3 ? { class: "n" } : {}, c)));
