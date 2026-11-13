@@ -29,6 +29,15 @@ Goal: build a personalised marathon training plan from the owner's Apple Health 
 
 ## Commands
 
+Set up the virtual env once (Python 3.11+; `requirements.txt` has pandas and numpy):
+
+```bash
+python -m venv .venv
+.venv/Scripts/python -m pip install -r requirements.txt   # Windows; on macOS/Linux: .venv/bin/python
+```
+
+Then run the scripts with `.venv/Scripts/python` instead of `python3`. The global Python here has pandas 2.1.4 with numpy 2.4, which crashes on import; the venv avoids that.
+
 ```bash
 python3 extract_health.py apple_health health_data   # ~3 min; rerun when a new export is added
 python3 summarize_health.py health_data summary      # ~1 min; needs pandas

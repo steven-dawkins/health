@@ -5,3 +5,4 @@ __pycache__/
 parkrun/
 strava_data/
 datasources.zip
+.venv/
