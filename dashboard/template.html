@@ -97,6 +97,8 @@ button:focus-visible, svg:focus-visible { outline: 2px solid var(--s1); outline-
 .prose p { margin: 8px 0; }
 .prose ul { margin: 8px 0; padding-left: 20px; }
 .prose li { margin: 4px 0; }
+.prose .vid-btn { margin: 4px 0 0 8px; height: 26px; vertical-align: baseline; }
+.prose .vid { display: block; width: 100%; max-width: 560px; aspect-ratio: 16 / 9; border: 0; border-radius: 8px; margin: 8px 0; background: var(--wash); }
 .prose code { font-size: 13px; background: var(--wash); padding: 1px 4px; border-radius: 4px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--grid); vertical-align: top; }
@@ -427,6 +429,21 @@ function rich(parent, text) {
     else if (seg.startsWith("`")) parent.append(el("code", {}, seg.slice(1, -1)));
     else parent.append(document.createTextNode(seg)); });
 }
+// "- **Label:** [Video title, Channel](https://www.youtube.com/watch?v=ID)" -> label + click-to-load embed.
+// Nothing is requested from YouTube until the button is clicked (youtube-nocookie, only 11-char IDs accepted).
+function videoItem(li, text) {
+  const m = /^(.*?)\[([^\]]+)\]\(https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})\)\s*$/.exec(text);
+  if (!m) { rich(li, text); return; }
+  rich(li, m[1].trim() + " " + m[2]);
+  const btn = el("button", { class: "tbl-btn vid-btn", type: "button", "aria-expanded": "false" }, "Watch");
+  btn.onclick = () => {
+    const open = btn.getAttribute("aria-expanded") === "true";
+    if (open) { li.querySelector(".vid").remove(); btn.setAttribute("aria-expanded", "false"); btn.textContent = "Watch"; return; }
+    li.append(el("iframe", { class: "vid", src: "https://www.youtube-nocookie.com/embed/" + m[3], title: m[2], loading: "lazy", allowfullscreen: "", referrerpolicy: "strict-origin-when-cross-origin", allow: "accelerometer; encrypted-media; gyroscope; picture-in-picture" }));
+    btn.setAttribute("aria-expanded", "true"); btn.textContent = "Hide";
+  };
+  li.append(btn);
+}
 function planTable(head, rows) {
   const wrap = el("div", { class: "tablewrap free" }), tbl = el("table"), h = el("tr");
   head.forEach(c => h.append(el("th", {}, c))); { const th = el("thead"); th.append(h); tbl.append(th); }
@@ -471,7 +488,7 @@ function dailyCard() {
     ["Day", "Date", "Session", "km", "Est. time"].forEach((c, i) => h.append(el("th", i >= 3 ? { class: "n" } : {}, c)));
     { const th = el("thead"); th.append(h); tbl.append(th); }
     const tb = el("tbody");
-    w.days.forEach(d => { const t0 = T(d.d); const isNow = t0 <= now && now < t0 + DAY, cls = isNow ? "now" : /^GATE|\*\*GATE/.test(d.session) || /GATE \d/.test(d.session) ? "race" : /^REST|^Strength session only/.test(d.session) ? "rest" : new Date(t0).getUTCDay() === 0 ? "long" : "";
+    w.days.forEach(d => { const t0 = T(d.d); const isNow = t0 <= now && now < t0 + DAY, cls = isNow ? "now" : /^GATE|\*\*GATE/.test(d.session) || /GATE \d/.test(d.session) ? "race" : /^REST|^Strength [AB] /.test(d.session) ? "rest" : new Date(t0).getUTCDay() === 0 ? "long" : "";
       const tr = el("tr", isNow ? { class: cls, "aria-current": "date" } : cls ? { class: cls } : {});
       tr.append(el("td", {}, new Date(t0).toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" })), el("td", {}, dshort(t0)));
       const td = el("td"); rich(td, d.session); tr.append(td);
@@ -490,7 +507,7 @@ function renderPlan() {
     const card = el("div", { class: "card wide prose" }); card.append(el("h2", {}, sec.title));
     sec.blocks.forEach(b => {
       if (b.t === "p") { const p = el("p"); rich(p, b.text); card.append(p); }
-      else if (b.t === "ul") { const ul = el("ul"); b.items.forEach(i => { const li = el("li"); rich(li, i); ul.append(li); }); card.append(ul); }
+      else if (b.t === "ul") { const ul = el("ul"); b.items.forEach(i => { const li = el("li"); videoItem(li, i); ul.append(li); }); card.append(ul); }
       else if (b.t === "table") card.append(planTable(b.head, b.rows));
     });
     grid.append(card);

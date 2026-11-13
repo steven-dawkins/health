@@ -75,39 +75,39 @@ The day-by-day version of this table is in `plan/daily_schedule.md` (generated b
 
 **Why:** the October marathon failed on leg durability (power -12%, stride -15% from km 35, heart rate fine). Strength work targets that: stiffer calves and Achilles, stronger single-leg quads/glutes, so form holds when the legs are tired. It also protects the 80-90 km weeks in the plan.
 
-**Two sessions a week, about 30-35 min, after the easy run (Wed and Fri).** Equipment assumed: dumbbells or kettlebell, a bench or box, a resistance band. A barbell is optional. Loads are set by effort (reps in reserve, RIR), not by fixed kilos, so they adapt to you.
+**Two sessions a week, about 30-35 min, after the easy run (Wed and Fri).** Equipment: a bench, your body weight, and a backpack you can load with books or water bottles (2-3 L bottles work well; start light and add as you progress). A towel on a smooth floor serves as a slider. No dumbbells, kettlebell or band needed. Without heavy weights, difficulty comes from single-leg versions, slow lowering (3 s), pauses and reps, then the backpack. Effort is set by reps in reserve (RIR), not by fixed kilos.
 
-- **Session A (Wed): leg strength.** The heavier session, done after the Wed easy run. It sits the day before Thu's hard run, so finish every set with 2-3 reps in reserve and never train to failure.
+- **Session A (Wed): leg strength.** The harder session, done after the Wed easy run. It sits the day before Thu's hard run, so finish every set with 2-3 reps in reserve and never train to failure.
 - **Session B (Fri): calves, hips, core, bounce.** Lower muscle damage. Fri is followed by an easy or parkrun Saturday and then the long run, so nothing here should leave you sore.
 
-**Warm-up (6-8 min, both sessions):** 5 min easy walk or the run itself, then 10 glute bridges, 10 lateral band walks each way, 10 leg swings each leg, 10 bodyweight squats.
+**Warm-up (6-8 min, both sessions):** 5 min easy walk or the run itself, then 10 glute bridges, 10 side-lying leg raises each side, 10 leg swings each leg, 10 bodyweight squats.
 
 **Session A: leg strength**
 
 | Exercise | Foundation (wk 1-4) | Build (wk 5-12) | Strength-power (wk 13-19) | Maintain (wk 20-24) |
 |---|---|---|---|---|
-| Split squat (rear foot on bench from Build) | 2x10 each leg, bodyweight | 3x8 each leg, dumbbells, RIR 3 | 4x5 each leg, heavy, RIR 2 | 2x6 each leg, moderate |
-| Romanian deadlift, one or two legs | 2x10, light | 3x8, RIR 3 | 4x5, heavy, RIR 2 | 2x6, moderate |
-| Step-up (knee-height box) | 2x10 each leg | 3x8 each leg, dumbbells | 3x6 each leg, heavier, slow lowering | 2x6 each leg |
-| Standing calf raise, straight knee | 3x12, 2 s up / 2 s down | 3x10 each leg, loaded | 4x6 each leg, heavy, 3 s lowering | 3x8 each leg |
-| Side plank or Copenhagen plank | 2x20 s each side | 3x30 s each side | 3x40 s each side | 2x30 s each side |
+| Split squat, rear foot on the bench | 2x8 each leg, bodyweight (rear foot on the floor if needed) | 3x8 each leg, 3 s lowering, loaded backpack held to chest from week 7, RIR 3 | 4x5 each leg, heavy backpack, 3 s lowering, 1 s pause at the bottom, RIR 2 | 2x6 each leg, moderate backpack |
+| Single-leg Romanian deadlift | 2x8 each leg, bodyweight | 3x8 each leg, 3 s lowering, backpack held to chest, RIR 3 | 4x5 each leg, heavy backpack, RIR 2 | 2x6 each leg |
+| Bench step-up (knee height), no push from the back foot | 2x10 each leg | 3x8 each leg, 3 s lowering, backpack | 3x6 each leg, heavy backpack, 3 s lowering | 2x6 each leg |
+| Single-leg calf raise, straight knee, toes on a step or bench edge | 3x12 each leg, 2 s up / 2 s down | 3x10 each leg, backpack in one hand, 3 s lowering | 4x6 each leg, backpack, 3 s lowering, 1 s pause at the top | 3x8 each leg |
+| Copenhagen plank (top foot on the bench) or side plank | 2x20 s each side, side plank | 3x20 s each side, short-lever Copenhagen (knee on the bench) | 3x25 s each side, full Copenhagen | 2x20 s each side |
 
-Rest 90-120 s between sets. In Strength-power, rest 2-3 min on the heavy sets (4-5 reps) so the quality holds.
+Rest 90-120 s between sets. In Strength-power, rest 2-3 min on the heavy sets so the quality holds. If bodyweight plus the backpack is still too easy in Build or Strength-power, make the exercise harder rather than only adding reps: lower the support (split squat to a lower rear foot, step-up to a higher bench), slow the lowering to 4-5 s, or move to a single-leg squat to the bench.
 
 **Session B: calves, hips, core, bounce**
 
 | Exercise | Foundation (wk 1-4) | Build (wk 5-12) | Strength-power (wk 13-19) | Maintain (wk 20-24) |
 |---|---|---|---|---|
-| Seated or bent-knee calf raise (soleus) | 3x12 | 3x12 each leg, loaded | 3x10 each leg, heavy | 2x10 each leg |
-| Single-leg glute bridge or hip thrust | 2x10 each leg | 3x10 each leg, loaded | 3x8 each leg, loaded | 2x8 each leg |
-| Hamstring slider curl or eccentric curl | 2x8 | 3x8 | 3x6, slow lowering | 2x6 |
-| Lateral band walk + single-leg balance | 2x10 steps each way, 2x30 s | 3x12 steps, 3x30 s eyes closed | 3x12 steps, 3x30 s on a cushion | 2x10 steps |
+| Seated calf raise (soleus), loaded backpack on the knees | 3x12 | 3x12, heavier backpack, single-leg from week 9 | 3x10 each leg, heavy backpack | 2x10 each leg |
+| Single-leg hip thrust, upper back on the bench | 2x8 each leg, bodyweight | 3x10 each leg, backpack on the hips | 3x8 each leg, heavy backpack, 2 s pause at the top | 2x8 each leg |
+| Towel slider hamstring curl (heels on a towel, smooth floor) | 2x6 two legs | 3x8 two legs | 3x6 each leg, 3 s lowering | 2x6 two legs |
+| Side-lying hip abduction + single-leg balance | 2x12 each side, 2x30 s | 3x15 each side, 3x30 s eyes closed | 3x15 each side, 3x30 s on a folded towel | 2x12 each side |
 | Dead bug or bird dog | 2x8 each side | 3x10 each side | 3x12 each side | 2x8 each side |
-| Bounce: pogo hops, then low skips or box jumps | Not yet | 2x15 pogo hops, soft landings | 3x20 pogo hops, 3x5 low box jumps | 2x10 pogo hops only |
+| Bounce: pogo hops, then low skips or box jumps onto the bench | Not yet | 2x15 pogo hops, soft landings | 3x20 pogo hops, 3x5 low step-ups-and-jumps onto the bench | 2x10 pogo hops only |
 
 **Progression**
 
-- Move to the next phase column on the week shown, not before. Within a phase, add load (2-5%) or one rep only when every set of the last session finished with the planned reps in reserve.
+- Move to the next phase column on the week shown, not before. Within a phase, add one rep, slow the lowering or add a little backpack weight only when every set of the last session finished with the planned reps in reserve.
 - Foundation is deliberately easy: it lets the calves, Achilles and hips adapt to weekly loading after the post-race low mileage. Expect no soreness beyond mild.
 - Down weeks (4, 8, 12, 16): drop one set from each exercise and keep the weights. Weeks 12, 20, 21 and 24 have one session only (Wed), and week 25 none.
 - Taper (weeks 23-24): halve the sets, keep the weights, no bounce work. Last strength session is Wed 21 Apr (week 24); nothing in race week, so no new soreness.
@@ -120,6 +120,23 @@ Rest 90-120 s between sets. In Strength-power, rest 2-3 min on the heavy sets (4
 - Soreness that is still there at the next hard run, or a calf/Achilles that is stiff the following morning, means: drop that exercise's load by a third and repeat the week's volume. Pain (not soreness) that lasts more than 3 days follows the niggle rule under Safeguards.
 - No new exercises and no personal-best loads in the final 3 weeks before race day.
 - Keep a simple log (exercise, load, reps, RIR). One line per exercise per session is enough to apply the progression rule above.
+
+## Exercise videos
+
+Form demos for each exercise above, found on YouTube. I picked them from search results and checked that they can be embedded, but I have not watched them all, so skim each one and favour the cues you trust. The dashboard loads each video only when you click it.
+
+- **Split squat, rear foot on the bench:** [How to Do a Perfect Bulgarian Split Squat (Beginner's Guide), Health, Wealth, Time](https://www.youtube.com/watch?v=BZb10der978)
+- **Single-leg Romanian deadlift (bodyweight):** [How to Perform Single Leg Romanian Deadlifts, Buff Dudes](https://www.youtube.com/watch?v=gz9l8UA_KXs)
+- **Bench step-up:** [How to Do Bench Step Ups, Coach Haris](https://www.youtube.com/watch?v=MZitRhrqZRE)
+- **Single-leg calf raise, straight knee, on a step:** [Single leg straight knee calf raises on a step, Mountain Ridge Physical Therapy](https://www.youtube.com/watch?v=OgVFFGsVOxk)
+- **Copenhagen plank and progressions:** [Copenhagen Plank (Progressions & Regressions), Momenta Chiropractic](https://www.youtube.com/watch?v=TH7B8ppYXOc)
+- **Seated calf raise (soleus):** [Seated Calf Raises for Soleus Strength/Rehab, ILLIMITEE](https://www.youtube.com/watch?v=9QAuUlRcL2w)
+- **Single-leg hip thrust, upper back on the bench:** [Single-Leg Bodyweight Hip Thrust on Bench, The Musician Fitness Trainer Channel](https://www.youtube.com/watch?v=jIO6wGeBLHE)
+- **Towel hamstring curl:** [Towel Hamstring Curls, Nick Brattain](https://www.youtube.com/watch?v=cWSsWpuxmYM)
+- **Side-lying hip abduction:** [Side-Lying Hip Abduction for Glute Medius, Elite Performance Institute](https://www.youtube.com/watch?v=9dJVwNzbH7s)
+- **Dead bug and bird dog:** [HOW TO: Dead Bug & Bird Dog, Health By Scott](https://www.youtube.com/watch?v=oV1_T-5ksj8)
+- **Pogo hops:** [Pogo Jumps, Hospital for Special Surgery](https://www.youtube.com/watch?v=8VddB27UkY4)
+- **Low box jump (onto the bench):** [Low Box Jump Technique, Made Possible Personal Training](https://www.youtube.com/watch?v=qq08W9Byy50)
 
 ## Durability and fuelling (what failed last time)
 
