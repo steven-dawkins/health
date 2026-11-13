@@ -86,11 +86,11 @@ The day-by-day version of this table is in `plan/daily_schedule.md` (generated b
 
 | Exercise | Foundation (wk 1-4) | Build (wk 5-12) | Strength-power (wk 13-19) | Maintain (wk 20-24) |
 |---|---|---|---|---|
-| Split squat, rear foot on the bench | 2x8 each leg, bodyweight (rear foot on the floor if needed) | 3x8 each leg, 3 s lowering, loaded backpack held to chest from week 7, RIR 3 | 4x5 each leg, heavy backpack, 3 s lowering, 1 s pause at the bottom, RIR 2 | 2x6 each leg, moderate backpack |
-| Single-leg Romanian deadlift | 2x8 each leg, bodyweight | 3x8 each leg, 3 s lowering, backpack held to chest, RIR 3 | 4x5 each leg, heavy backpack, RIR 2 | 2x6 each leg |
-| Bench step-up (knee height), no push from the back foot | 2x10 each leg | 3x8 each leg, 3 s lowering, backpack | 3x6 each leg, heavy backpack, 3 s lowering | 2x6 each leg |
-| Single-leg calf raise, straight knee, toes on a step or bench edge | 3x12 each leg, 2 s up / 2 s down | 3x10 each leg, backpack in one hand, 3 s lowering | 4x6 each leg, backpack, 3 s lowering, 1 s pause at the top | 3x8 each leg |
-| Copenhagen plank (top foot on the bench) or side plank | 2x20 s each side, side plank | 3x20 s each side, short-lever Copenhagen (knee on the bench) | 3x25 s each side, full Copenhagen | 2x20 s each side |
+| [Split squat, rear foot on the bench](https://www.youtube.com/watch?v=BZb10der978) | 2x8 each leg, bodyweight (rear foot on the floor if needed) | 3x8 each leg, 3 s lowering, loaded backpack held to chest from week 7, RIR 3 | 4x5 each leg, heavy backpack, 3 s lowering, 1 s pause at the bottom, RIR 2 | 2x6 each leg, moderate backpack |
+| [Single-leg Romanian deadlift](https://www.youtube.com/watch?v=gz9l8UA_KXs) | 2x8 each leg, bodyweight | 3x8 each leg, 3 s lowering, backpack held to chest, RIR 3 | 4x5 each leg, heavy backpack, RIR 2 | 2x6 each leg |
+| [Bench step-up](https://www.youtube.com/watch?v=MZitRhrqZRE) (knee height), no push from the back foot | 2x10 each leg | 3x8 each leg, 3 s lowering, backpack | 3x6 each leg, heavy backpack, 3 s lowering | 2x6 each leg |
+| [Single-leg calf raise, straight knee](https://www.youtube.com/watch?v=OgVFFGsVOxk), toes on a step or bench edge | 3x12 each leg, 2 s up / 2 s down | 3x10 each leg, backpack in one hand, 3 s lowering | 4x6 each leg, backpack, 3 s lowering, 1 s pause at the top | 3x8 each leg |
+| [Copenhagen plank](https://www.youtube.com/watch?v=TH7B8ppYXOc) (top foot on the bench) or side plank | 2x20 s each side, side plank | 3x20 s each side, short-lever Copenhagen (knee on the bench) | 3x25 s each side, full Copenhagen | 2x20 s each side |
 
 Rest 90-120 s between sets. In Strength-power, rest 2-3 min on the heavy sets so the quality holds. If bodyweight plus the backpack is still too easy in Build or Strength-power, make the exercise harder rather than only adding reps: lower the support (split squat to a lower rear foot, step-up to a higher bench), slow the lowering to 4-5 s, or move to a single-leg squat to the bench.
 
@@ -98,12 +98,12 @@ Rest 90-120 s between sets. In Strength-power, rest 2-3 min on the heavy sets so
 
 | Exercise | Foundation (wk 1-4) | Build (wk 5-12) | Strength-power (wk 13-19) | Maintain (wk 20-24) |
 |---|---|---|---|---|
-| Seated calf raise (soleus), loaded backpack on the knees | 3x12 | 3x12, heavier backpack, single-leg from week 9 | 3x10 each leg, heavy backpack | 2x10 each leg |
-| Single-leg hip thrust, upper back on the bench | 2x8 each leg, bodyweight | 3x10 each leg, backpack on the hips | 3x8 each leg, heavy backpack, 2 s pause at the top | 2x8 each leg |
-| Towel slider hamstring curl (heels on a towel, smooth floor) | 2x6 two legs | 3x8 two legs | 3x6 each leg, 3 s lowering | 2x6 two legs |
-| Side-lying hip abduction + single-leg balance | 2x12 each side, 2x30 s | 3x15 each side, 3x30 s eyes closed | 3x15 each side, 3x30 s on a folded towel | 2x12 each side |
-| Dead bug or bird dog | 2x8 each side | 3x10 each side | 3x12 each side | 2x8 each side |
-| Bounce: pogo hops, then low skips or box jumps onto the bench | Not yet | 2x15 pogo hops, soft landings | 3x20 pogo hops, 3x5 low step-ups-and-jumps onto the bench | 2x10 pogo hops only |
+| [Seated calf raise (soleus)](https://www.youtube.com/watch?v=9QAuUlRcL2w), loaded backpack on the knees | 3x12 | 3x12, heavier backpack, single-leg from week 9 | 3x10 each leg, heavy backpack | 2x10 each leg |
+| [Single-leg hip thrust, upper back on the bench](https://www.youtube.com/watch?v=jIO6wGeBLHE) | 2x8 each leg, bodyweight | 3x10 each leg, backpack on the hips | 3x8 each leg, heavy backpack, 2 s pause at the top | 2x8 each leg |
+| [Towel slider hamstring curl](https://www.youtube.com/watch?v=cWSsWpuxmYM) (heels on a towel, smooth floor) | 2x6 two legs | 3x8 two legs | 3x6 each leg, 3 s lowering | 2x6 two legs |
+| [Side-lying hip abduction](https://www.youtube.com/watch?v=9dJVwNzbH7s) + single-leg balance | 2x12 each side, 2x30 s | 3x15 each side, 3x30 s eyes closed | 3x15 each side, 3x30 s on a folded towel | 2x12 each side |
+| [Dead bug or bird dog](https://www.youtube.com/watch?v=oV1_T-5ksj8) | 2x8 each side | 3x10 each side | 3x12 each side | 2x8 each side |
+| Bounce: [pogo hops](https://www.youtube.com/watch?v=8VddB27UkY4), then low skips or [box jumps](https://www.youtube.com/watch?v=qq08W9Byy50) onto the bench | Not yet | 2x15 pogo hops, soft landings | 3x20 pogo hops, 3x5 low step-ups-and-jumps onto the bench | 2x10 pogo hops only |
 
 **Progression**
 
@@ -123,7 +123,7 @@ Rest 90-120 s between sets. In Strength-power, rest 2-3 min on the heavy sets so
 
 ## Exercise videos
 
-Form demos for each exercise above, found on YouTube. I picked them from search results and checked that they can be embedded, but I have not watched them all, so skim each one and favour the cues you trust. The dashboard loads each video only when you click it.
+Form demos for each exercise above, found on YouTube. The exercise names in the Session A and B tables link to the same videos. I picked them from search results and checked that they can be embedded, but I have not watched them all, so skim each one and favour the cues you trust. The dashboard loads each video only when you click it.
 
 - **Split squat, rear foot on the bench:** [How to Do a Perfect Bulgarian Split Squat (Beginner's Guide), Health, Wealth, Time](https://www.youtube.com/watch?v=BZb10der978)
 - **Single-leg Romanian deadlift (bodyweight):** [How to Perform Single Leg Romanian Deadlifts, Buff Dudes](https://www.youtube.com/watch?v=gz9l8UA_KXs)

@@ -429,25 +429,33 @@ function rich(parent, text) {
     else if (seg.startsWith("`")) parent.append(el("code", {}, seg.slice(1, -1)));
     else parent.append(document.createTextNode(seg)); });
 }
-// "- **Label:** [Video title, Channel](https://www.youtube.com/watch?v=ID)" -> label + click-to-load embed.
-// Nothing is requested from YouTube until the button is clicked (youtube-nocookie, only 11-char IDs accepted).
-function videoItem(li, text) {
-  const m = /^(.*?)\[([^\]]+)\]\(https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})\)\s*$/.exec(text);
-  if (!m) { rich(li, text); return; }
-  rich(li, m[1].trim() + " " + m[2]);
-  const btn = el("button", { class: "tbl-btn vid-btn", type: "button", "aria-expanded": "false" }, "Watch");
-  btn.onclick = () => {
-    const open = btn.getAttribute("aria-expanded") === "true";
-    if (open) { li.querySelector(".vid").remove(); btn.setAttribute("aria-expanded", "false"); btn.textContent = "Watch"; return; }
-    li.append(el("iframe", { class: "vid", src: "https://www.youtube-nocookie.com/embed/" + m[3], title: m[2], loading: "lazy", allowfullscreen: "", referrerpolicy: "strict-origin-when-cross-origin", allow: "accelerometer; encrypted-media; gyroscope; picture-in-picture" }));
-    btn.setAttribute("aria-expanded", "true"); btn.textContent = "Hide";
-  };
-  li.append(btn);
+// Text with "[title](https://www.youtube.com/watch?v=ID)" links -> the title plus a click-to-load embed button per link.
+// Nothing is requested from YouTube until a button is clicked (youtube-nocookie, only 11-char IDs accepted).
+function videoText(parent, text) {
+  const re = /\[([^\]]+)\]\(https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})\)/g;
+  let last = 0, m, any = false;
+  while ((m = re.exec(text))) {
+    any = true; rich(parent, text.slice(last, m.index)); last = re.lastIndex;
+    const title = m[1], id = m[2];
+    parent.append(document.createTextNode(title));
+    const btn = el("button", { class: "tbl-btn vid-btn", type: "button", "aria-expanded": "false", "aria-label": "Watch demo: " + title }, "Watch");
+    let frame = null;
+    btn.onclick = () => {
+      if (frame) { (frame.closest("tr.vid-row") || frame).remove(); frame = null; btn.setAttribute("aria-expanded", "false"); btn.textContent = "Watch"; return; }
+      frame = el("iframe", { class: "vid", src: "https://www.youtube-nocookie.com/embed/" + id, title: title, loading: "lazy", allowfullscreen: "", referrerpolicy: "strict-origin-when-cross-origin", allow: "accelerometer; encrypted-media; gyroscope; picture-in-picture" });
+      const row = parent.tagName === "TD" ? parent.parentElement : null;  // in a table, the video gets its own full-width row below
+      if (row) { const vr = el("tr", { class: "vid-row" }), vd = el("td", { colspan: String(row.children.length) }); vd.append(frame); vr.append(vd); row.after(vr); }
+      else parent.append(frame);
+      btn.setAttribute("aria-expanded", "true"); btn.textContent = "Hide";
+    };
+    parent.append(btn);
+  }
+  if (any) rich(parent, text.slice(last)); else rich(parent, text);
 }
 function planTable(head, rows) {
   const wrap = el("div", { class: "tablewrap free" }), tbl = el("table"), h = el("tr");
   head.forEach(c => h.append(el("th", {}, c))); { const th = el("thead"); th.append(h); tbl.append(th); }
-  const tb = el("tbody"); rows.forEach(r => { const tr = el("tr"); r.forEach(c => { const td = el("td"); rich(td, c); tr.append(td); }); tb.append(tr); });
+  const tb = el("tbody"); rows.forEach(r => { const tr = el("tr"); r.forEach(c => { const td = el("td"); videoText(td, c); tr.append(td); }); tb.append(tr); });
   tbl.append(tb); wrap.append(tbl); return wrap;
 }
 function weeksCard() {
@@ -507,7 +515,7 @@ function renderPlan() {
     const card = el("div", { class: "card wide prose" }); card.append(el("h2", {}, sec.title));
     sec.blocks.forEach(b => {
       if (b.t === "p") { const p = el("p"); rich(p, b.text); card.append(p); }
-      else if (b.t === "ul") { const ul = el("ul"); b.items.forEach(i => { const li = el("li"); videoItem(li, i); ul.append(li); }); card.append(ul); }
+      else if (b.t === "ul") { const ul = el("ul"); b.items.forEach(i => { const li = el("li"); videoText(li, i); ul.append(li); }); card.append(ul); }
       else if (b.t === "table") card.append(planTable(b.head, b.rows));
     });
     grid.append(card);
