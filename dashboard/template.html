@@ -433,15 +433,16 @@ function rich(parent, text) {
 // Nothing is requested from YouTube until a button is clicked (youtube-nocookie, only 11-char IDs accepted).
 function videoText(parent, text) {
   const re = /\[([^\]]+)\]\(https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})\)/g;
+  const linksOnly = parent.tagName === "TD" && /^[\s,]*$/.test(text.replace(re, ""));  // a "Video" column cell: buttons only
+  const what = linksOnly && parent.parentElement.firstChild ? parent.parentElement.firstChild.textContent : "";
   let last = 0, m, any = false;
   while ((m = re.exec(text))) {
-    any = true; rich(parent, text.slice(last, m.index)); last = re.lastIndex;
-    const title = m[1], id = m[2];
-    parent.append(document.createTextNode(title));
-    const btn = el("button", { class: "tbl-btn vid-btn", type: "button", "aria-expanded": "false", "aria-label": "Watch demo: " + title }, "Watch");
+    any = true; if (!linksOnly) { rich(parent, text.slice(last, m.index)); parent.append(document.createTextNode(m[1])); } last = re.lastIndex;
+    const label = linksOnly ? m[1] : "Watch", title = linksOnly ? (what + (m[1] === "Watch" ? "" : ": " + m[1])) : m[1], id = m[2];
+    const btn = el("button", { class: "tbl-btn vid-btn", type: "button", "aria-expanded": "false", "aria-label": "Watch demo: " + title }, label);
     let frame = null;
     btn.onclick = () => {
-      if (frame) { (frame.closest("tr.vid-row") || frame).remove(); frame = null; btn.setAttribute("aria-expanded", "false"); btn.textContent = "Watch"; return; }
+      if (frame) { (frame.closest("tr.vid-row") || frame).remove(); frame = null; btn.setAttribute("aria-expanded", "false"); btn.textContent = label; return; }
       frame = el("iframe", { class: "vid", src: "https://www.youtube-nocookie.com/embed/" + id, title: title, loading: "lazy", allowfullscreen: "", referrerpolicy: "strict-origin-when-cross-origin", allow: "accelerometer; encrypted-media; gyroscope; picture-in-picture" });
       const row = parent.tagName === "TD" ? parent.parentElement : null;  // in a table, the video gets its own full-width row below
       if (row) { const vr = el("tr", { class: "vid-row" }), vd = el("td", { colspan: String(row.children.length) }); vd.append(frame); vr.append(vd); row.after(vr); }
@@ -450,12 +451,12 @@ function videoText(parent, text) {
     };
     parent.append(btn);
   }
-  if (any) rich(parent, text.slice(last)); else rich(parent, text);
+  if (!linksOnly) rich(parent, any ? text.slice(last) : text);
 }
 function planTable(head, rows) {
   const wrap = el("div", { class: "tablewrap free" }), tbl = el("table"), h = el("tr");
   head.forEach(c => h.append(el("th", {}, c))); { const th = el("thead"); th.append(h); tbl.append(th); }
-  const tb = el("tbody"); rows.forEach(r => { const tr = el("tr"); r.forEach(c => { const td = el("td"); videoText(td, c); tr.append(td); }); tb.append(tr); });
+  const tb = el("tbody"); rows.forEach(r => { const tr = el("tr"); r.forEach(c => { const td = el("td"); tr.append(td); videoText(td, c); }); tb.append(tr); });
   tbl.append(tb); wrap.append(tbl); return wrap;
 }
 function weeksCard() {
